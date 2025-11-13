@@ -33,7 +33,7 @@ export function CRTScreen({ children }: CRTScreenProps) {
         {/* Screen Frame Shadow */}
         <div className="mt-4 text-center">
           <p className="font-mono text-xs text-gray-600">
-            BOEING 747-8 INTERCONTINENTAL - DIGITAL CHECKLIST SYSTEM
+            VEHICLE DIGITAL CHECKLIST SYSTEM
           </p>
         </div>
       </div>

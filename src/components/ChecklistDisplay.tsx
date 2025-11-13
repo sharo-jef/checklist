@@ -5,7 +5,7 @@ import { Checklist, Progress } from '@/types/checklist';
 
 interface ChecklistDisplayProps {
   checklist: Checklist | undefined;
-  items: Array<{ id: string; text: string; checked: boolean; required?: boolean }>;
+  items: Array<{ id: string; item: string; value: string; checked: boolean; required?: boolean }>;
   progress: Progress;
   onToggleItem: (itemId: string) => void;
   onReset?: () => void;
@@ -28,7 +28,8 @@ export function ChecklistDisplay({
             {items.map((item) => (
               <ChecklistItem
                 key={item.id}
-                text={item.text}
+                item={item.item}
+                value={item.value}
                 checked={item.checked}
                 required={item.required}
                 onToggle={() => onToggleItem(item.id)}

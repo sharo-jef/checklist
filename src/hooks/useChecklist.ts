@@ -56,6 +56,18 @@ export function useChecklist({ categories }: UseChecklistProps) {
     []
   );
 
+  // カテゴリ変更時に最初のチェックリストを自動選択
+  const handleCategoryChange = useCallback(
+    (categoryId: string) => {
+      setActiveCategory(categoryId);
+      const category = categories.find((c) => c.id === categoryId);
+      if (category && category.checklists.length > 0) {
+        setActiveChecklist(category.checklists[0].id);
+      }
+    },
+    [categories]
+  );
+
   // 進捗情報を計算
   const getProgress = useCallback(
     (categoryId: string, checklistId: string): Progress => {
@@ -127,7 +139,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
     categories,
     
     // アクション
-    setActiveCategory,
+    setActiveCategory: handleCategoryChange,
     setActiveChecklist,
     toggleItem,
     resetAll,

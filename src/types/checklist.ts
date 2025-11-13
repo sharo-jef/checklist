@@ -8,8 +8,10 @@
 export interface ChecklistItem {
   /** 一意識別子 */
   id: string;
-  /** 表示テキスト */
-  text: string;
+  /** 項目名（左側） */
+  item: string;
+  /** ステータス/値（右側） */
+  value: string;
   /** 完了状態 */
   completed: boolean;
   /** 必須項目フラグ */

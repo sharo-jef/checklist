@@ -1,11 +1,24 @@
 interface ChecklistItemProps {
-  text: string;
+  item: string;
+  value: string;
   checked: boolean;
   required?: boolean;
   onToggle: () => void;
 }
 
-export function ChecklistItem({ text, checked, required, onToggle }: ChecklistItemProps) {
+/**
+ * 項目名と値の間にドットを自動生成する
+ */
+function generateSeparator(item: string, value: string): string {
+  const totalLength = 40; // 全体の文字数
+  const currentLength = item.length + value.length;
+  const dotsCount = Math.max(3, totalLength - currentLength);
+  return '.'.repeat(dotsCount);
+}
+
+export function ChecklistItem({ item, value, checked, required, onToggle }: ChecklistItemProps) {
+  const separator = generateSeparator(item, value);
+  
   return (
     <div
       onClick={onToggle}
@@ -20,7 +33,9 @@ export function ChecklistItem({ text, checked, required, onToggle }: ChecklistIt
       </div>
       <div className="flex-1 font-mono text-sm tracking-wide">
         <span className={checked ? 'text-green-400' : 'text-green-500'}>
-          {text}
+          {item}
+          <span className="text-green-700">{separator}</span>
+          {value}
         </span>
         {required && (
           <span className="ml-2 text-green-600 text-xs">*</span>

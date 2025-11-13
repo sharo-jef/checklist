@@ -19,7 +19,7 @@ export function Header({ checklist }: HeaderProps) {
           )}
         </div>
         <div className="text-right">
-          <div className="font-mono text-xs text-green-600">B747-8i</div>
+          <div className="font-mono text-xs text-green-600">VEHICLE</div>
           <div className="font-mono text-xs text-green-600">
             DIGITAL CHECKLIST
           </div>

@@ -1,18 +1,17 @@
-# B747-8i Digital Checklist
+# Vehicle Digital Checklist
 
-Boeing 747-8 Intercontinental に搭載されているデジタルチェックリスト風の Web アプリケーションです。
-レトロな CRT モニター風の UI で、航空機のプロフェッショナルなチェックリストシステムを再現しています。
-
-![B747-8i Digital Checklist](docs/screenshot.png)
+自家用車の運転前チェックリスト Web アプリケーションです。
+レトロな CRT モニター風の UI で、安全運転のためのチェックリストシステムを提供します。
 
 ## ✨ 特徴
 
 - 🖥️ **レトロ CRT ディスプレイ UI** - 緑色のモノクロームディスプレイ、スキャンライン効果
-- ✈️ **リアルな航空機チェックリスト** - B747-8i の実際の手順を参考にしたデータ
+- 🚗 **運転前チェックリスト** - 安全な運転のための確認項目
 - 📋 **タブベースのナビゲーション** - カテゴリ別に整理されたチェックリスト
 - 💾 **自動保存** - LocalStorage による状態の永続化
 - 📊 **進捗表示** - リアルタイムで完了状況を確認
-- 🎨 **没入感のあるデザイン** - コックピットディスプレイの雰囲気を再現
+- 🎨 **没入感のあるデザイン** - プロフェッショナルなディスプレイの雰囲気を再現
+- ⚙️ **自動ドット表示** - チェック項目のフォーマットを自動整形
 
 ## 🚀 Getting Started
 
@@ -85,14 +84,9 @@ checklist/
 
 ## 📋 チェックリストカテゴリ
 
-1. **Passenger Signs** - 客室サイン関連
-2. **Electrical** - 電気系統
-3. **Fuel** - 燃料系統
-4. **Hydraulics** - 油圧系統
-5. **Flight Controls** - 操縦系統
-6. **Engines** - エンジン関連
-7. **Before Taxi** - 地上走行前
-8. **Before Takeoff** - 離陸前
+1. **PREDRIVE** - 運転前の準備
+2. **BEFORE START** - エンジン始動前
+3. **BEFORE DEPARTURE** - 出発前
 
 ## 🎨 デザインコンセプト
 
@@ -119,11 +113,26 @@ checklist/
 
 `src/data/checklists.ts` を編集して、独自のチェックリストを追加できます。
 
+チェック項目は `item`（項目名）と `value`（値/ステータス）を分けて記述すると、自動的にドットが挿入されます：
+
 ```typescript
 {
   id: 'custom-category',
   title: 'Custom Category',
   checklists: [
+    {
+      id: 'custom-list',
+      name: 'Custom Checklist',
+      phase: 'Custom Phase',
+      items: [
+        // 表示: "Parking brake..........Set"
+        { id: 'item-1', item: 'Parking brake', value: 'Set', completed: false, required: true },
+        // 表示: "Master switch..........CUTOFF"
+        { id: 'item-2', item: 'Master switch', value: 'CUTOFF', completed: false, required: true }
+      ]
+    }
+  ]
+}
     {
       id: 'custom-list',
       name: 'Custom Checklist',
@@ -154,8 +163,9 @@ checklist/
 
 ## 🙏 謝辞
 
-- Boeing 747-8i のデジタルチェックリストシステムにインスパイアされました
+- 航空機のデジタルチェックリストシステムにインスパイアされました
 - レトロな CRT ディスプレイのデザインを再現
+- 安全運転のための確認習慣をサポート
 
 ---
 
