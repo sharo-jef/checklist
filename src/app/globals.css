@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #00ff00;
+  
+  /* CRT Colors */
+  --crt-background: #000000;
+  --crt-screen-bg: #001a00;
+  --crt-text-primary: #00ff00;
+  --crt-text-secondary: #33ff33;
+  --crt-text-dim: #006600;
+  --crt-glow: rgba(0, 255, 0, 0.5);
+  --crt-highlight: #00ff88;
+  --crt-border: #004400;
+  --status-completed: #00ff00;
+  --status-incomplete: #666666;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  padding: 0;
+}
+
+/* CRT Scanlines Effect */
+.scanlines {
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 255, 0, 0.05) 51%
+  );
+  background-size: 100% 4px;
+  height: 100%;
+  width: 100%;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+/* CRT Text Glow */
+.crt-glow {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 20px currentColor;
+}
+
+/* Radial Gradient for Vignette */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Custom Scrollbar for CRT feel */
+::-webkit-scrollbar {
+  width: 12px;
+  background: #001a00;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+  border-left: 1px solid #004400;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #006600;
+  border: 2px solid #004400;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff00;
+}
+
+/* Selection */
+::selection {
+  background: #00ff00;
+  color: #000000;
+}
+
+::-moz-selection {
+  background: #00ff00;
+  color: #000000;
+}
+
