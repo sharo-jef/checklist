@@ -9,7 +9,7 @@ import { useChecklist } from '@/hooks/useChecklist';
 import { checklistData } from '@/data/checklists';
 
 type ViewMode = 'menu' | 'checklist';
-type MenuType = 'normal' | 'resets' | 'non-normal';
+type MenuType = 'normal' | 'non-normal';
 
 export default function Home() {
   const [activeMenu, setActiveMenu] = useState<MenuType>('normal');
@@ -22,6 +22,7 @@ export default function Home() {
     toggleItem,
     getCurrentChecklist,
     getCurrentItems,
+    resetChecklist,
   } = useChecklist({ categories: checklistData });
 
   const currentChecklist = getCurrentChecklist();
@@ -34,33 +35,46 @@ export default function Home() {
     }
   };
 
+  const handleReset = () => {
+    if (currentChecklist) {
+      resetChecklist(activeCategory, currentChecklist.id);
+      setActiveItemIndex(0);
+    }
+  };
+
   const handleChecklistSelect = (categoryId: string) => {
     setActiveCategory(categoryId);
     setViewMode('checklist');
     setActiveItemIndex(0);
   };
 
-  const handleBack = () => {
-    setViewMode('menu');
-    setActiveItemIndex(0);
-  };
-
   const handleToggleItem = (itemId: string) => {
+    const itemIndex = currentItems.findIndex((item) => item.id === itemId);
+    const currentItem = currentItems[itemIndex];
+    
     toggleItem(activeCategory, currentChecklist?.id || '', itemId);
-    // 次の項目に移動
-    if (activeItemIndex < currentItems.length - 1) {
+    
+    // チェックを入れた場合、次の項目に移動
+    if (!currentItem.checked && activeItemIndex < currentItems.length - 1) {
       setActiveItemIndex(activeItemIndex + 1);
+    }
+    // チェックを外した場合、その項目に留まる
+    else if (currentItem.checked) {
+      setActiveItemIndex(itemIndex);
     }
   };
 
   return (
     <CRTScreen>
-      <TopMenu activeMenu={activeMenu} onMenuChange={handleMenuChange} />
+      <TopMenu
+        activeMenu={activeMenu}
+        onMenuChange={handleMenuChange}
+        onReset={handleReset}
+      />
       {activeMenu === 'normal' && viewMode === 'menu' && (
         <ChecklistMenu
           categories={checklistData}
           onSelect={handleChecklistSelect}
-          onBack={() => {}}
         />
       )}
       {activeMenu === 'normal' && viewMode === 'checklist' && (
@@ -69,13 +83,7 @@ export default function Home() {
           items={currentItems}
           activeItemIndex={activeItemIndex}
           onToggleItem={handleToggleItem}
-          onBack={handleBack}
         />
-      )}
-      {activeMenu === 'resets' && (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="font-mono text-white text-lg">RESETS MENU</p>
-        </div>
       )}
       {activeMenu === 'non-normal' && (
         <div className="flex-1 flex items-center justify-center">

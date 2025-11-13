@@ -38,6 +38,31 @@ export function useChecklist({ categories }: UseChecklistProps) {
         const currentState = prev[categoryId]?.[checklistId]?.[itemId] ?? false;
         const newState = !currentState;
 
+        // チェックを外す場合、それ以降の項目もすべて外す
+        if (currentState && !newState) {
+          const category = categories.find((c) => c.id === categoryId);
+          const checklist = category?.checklists.find((cl) => cl.id === checklistId);
+          
+          if (checklist) {
+            const itemIndex = checklist.items.findIndex((item) => item.id === itemId);
+            const updatedChecklistState = { ...prev[categoryId]?.[checklistId] };
+            
+            // 現在の項目以降をすべてfalseに設定
+            checklist.items.slice(itemIndex).forEach((item) => {
+              updatedChecklistState[item.id] = false;
+              setItemState(categoryId, checklistId, item.id, false);
+            });
+
+            return {
+              ...prev,
+              [categoryId]: {
+                ...prev[categoryId],
+                [checklistId]: updatedChecklistState,
+              },
+            };
+          }
+        }
+
         // LocalStorageに保存
         setItemState(categoryId, checklistId, itemId, newState);
 
@@ -53,7 +78,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
         };
       });
     },
-    []
+    [categories]
   );
 
   // カテゴリ変更時に最初のチェックリストを自動選択

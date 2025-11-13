@@ -24,7 +24,7 @@ export function ChecklistItem({ item, value, checked, required, isActive, onTogg
     <div
       onClick={onToggle}
       className={`flex items-center gap-2 py-2 px-3 cursor-pointer ${
-        isActive ? 'bg-[#ff00ff]' : 'bg-[#1e2633]'
+        isActive ? 'border-2 border-[#ff00ff]' : 'border-2 border-transparent'
       }`}
     >
       {/* 自動チェック用の灰色背景（required=falseの場合のみ表示） */}

@@ -2,8 +2,8 @@
 
 :root {
   /* 参考画像の正確な色 */
-  --bg-dark: #2a3340;
-  --bg-display: #1e2633;
+  --bg-display: #213248;
+  --menu-bg: #213248;
   --menu-inactive: #4a5568;
   --menu-active: #6b7c94;
   --text-white: #ffffff;

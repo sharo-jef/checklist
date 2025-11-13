@@ -1,14 +1,15 @@
 interface TopMenuProps {
-  activeMenu: 'normal' | 'resets' | 'non-normal';
-  onMenuChange: (menu: 'normal' | 'resets' | 'non-normal') => void;
+  activeMenu: 'normal' | 'non-normal';
+  onMenuChange: (menu: 'normal' | 'non-normal') => void;
+  onReset: () => void;
 }
 
-export function TopMenu({ activeMenu, onMenuChange }: TopMenuProps) {
+export function TopMenu({ activeMenu, onMenuChange, onReset }: TopMenuProps) {
   return (
-    <div className="flex bg-[#2a3340]">
+    <div className="flex gap-3 p-3 bg-[#213248]">
       <button
         onClick={() => onMenuChange('normal')}
-        className={`flex-1 py-2 text-center font-mono text-xs tracking-widest ${
+        className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${
           activeMenu === 'normal'
             ? 'bg-[#6b7c94] text-white'
             : 'bg-[#4a5568] text-white'
@@ -17,18 +18,14 @@ export function TopMenu({ activeMenu, onMenuChange }: TopMenuProps) {
         NORMAL MENU
       </button>
       <button
-        onClick={() => onMenuChange('resets')}
-        className={`flex-1 py-2 text-center font-mono text-xs tracking-widest ${
-          activeMenu === 'resets'
-            ? 'bg-[#6b7c94] text-white'
-            : 'bg-[#4a5568] text-white'
-        }`}
+        onClick={onReset}
+        className="flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest bg-[#4a5568] text-white"
       >
         RESETS
       </button>
       <button
         onClick={() => onMenuChange('non-normal')}
-        className={`flex-1 py-2 text-center font-mono text-xs tracking-widest ${
+        className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${
           activeMenu === 'non-normal'
             ? 'bg-[#6b7c94] text-white'
             : 'bg-[#4a5568] text-white'
