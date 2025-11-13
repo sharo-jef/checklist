@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   ChecklistCategory,
   ChecklistItem,
@@ -18,18 +18,26 @@ export function useChecklist({ categories }: UseChecklistProps) {
   const [activeChecklist, setActiveChecklist] = useState(
     categories[0]?.checklists[0]?.id || ''
   );
-  
-  // LocalStorageから初期状態を読み込む（初期値として設定）
+
+  // 初期状態は空オブジェクト（サーバーとクライアントで一致）
   const [checklistStates, setChecklistStates] = useState<{
     [categoryId: string]: {
       [checklistId: string]: {
         [itemId: string]: boolean;
       };
     };
-  }>(() => {
+  }>({});
+
+  // クライアントサイドでのみLocalStorageから読み込む（ハイドレーション対応）
+  useEffect(() => {
     const stored = loadFromStorage();
-    return stored?.checklistStates || {};
-  });
+    if (stored?.checklistStates) {
+      // useEffectの中でqueueMicrotaskを使用して次のマイクロタスクで実行
+      queueMicrotask(() => {
+        setChecklistStates(stored.checklistStates || {});
+      });
+    }
+  }, []);
 
   // チェック項目のトグル
   const toggleItem = useCallback(
