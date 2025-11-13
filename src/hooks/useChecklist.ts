@@ -162,6 +162,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
     activeCategory,
     activeChecklist,
     categories,
+    checklistStates,
     
     // アクション
     setActiveCategory: handleCategoryChange,

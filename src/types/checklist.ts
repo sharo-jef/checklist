@@ -3,6 +3,14 @@
  */
 
 /**
+ * メニュータイプ
+ */
+export enum MenuType {
+  NORMAL = 'normal',
+  NON_NORMAL = 'non-normal',
+}
+
+/**
  * チェックリスト項目
  */
 export interface ChecklistItem {
@@ -28,8 +36,6 @@ export interface Checklist {
   id: string;
   /** チェックリスト名 */
   name: string;
-  /** フェーズ（例: Pre-flight, Taxi） */
-  phase?: string;
   /** チェック項目リスト */
   items: ChecklistItem[];
 }
@@ -44,6 +50,8 @@ export interface ChecklistCategory {
   title: string;
   /** このカテゴリに含まれるチェックリスト */
   checklists: Checklist[];
+  /** メニュータイプ */
+  menuType: MenuType;
 }
 
 /**

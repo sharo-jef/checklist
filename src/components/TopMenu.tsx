@@ -1,6 +1,8 @@
+import { MenuType } from '@/types/checklist';
+
 interface TopMenuProps {
-  activeMenu: 'normal' | 'non-normal';
-  onMenuChange: (menu: 'normal' | 'non-normal') => void;
+  activeMenu: MenuType | null;
+  onMenuChange: (menu: MenuType) => void;
   onReset: () => void;
 }
 
@@ -8,9 +10,9 @@ export function TopMenu({ activeMenu, onMenuChange, onReset }: TopMenuProps) {
   return (
     <div className="flex gap-3 p-3 bg-[#1B2A3E]">
       <button
-        onClick={() => onMenuChange('normal')}
+        onClick={() => onMenuChange(MenuType.NORMAL)}
         className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${
-          activeMenu === 'normal'
+          activeMenu === MenuType.NORMAL
             ? 'bg-[#6b7c94] text-white'
             : 'bg-[#4a5568] text-white'
         }`}
@@ -21,12 +23,12 @@ export function TopMenu({ activeMenu, onMenuChange, onReset }: TopMenuProps) {
         onClick={onReset}
         className="flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest bg-[#4a5568] text-white"
       >
-        RESETS
+        RESET
       </button>
       <button
-        onClick={() => onMenuChange('non-normal')}
+        onClick={() => onMenuChange(MenuType.NON_NORMAL)}
         className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${
-          activeMenu === 'non-normal'
+          activeMenu === MenuType.NON_NORMAL
             ? 'bg-[#6b7c94] text-white'
             : 'bg-[#4a5568] text-white'
         }`}

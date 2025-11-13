@@ -7,12 +7,12 @@ import { ChecklistMenu } from '@/components/ChecklistMenu';
 import { ChecklistDisplay } from '@/components/ChecklistDisplay';
 import { useChecklist } from '@/hooks/useChecklist';
 import { checklistData } from '@/data/checklists';
+import { MenuType } from '@/types/checklist';
 
 type ViewMode = 'menu' | 'checklist';
-type MenuType = 'normal' | 'non-normal';
 
 export default function Home() {
-  const [activeMenu, setActiveMenu] = useState<MenuType>('normal');
+  const [activeMenu, setActiveMenu] = useState<MenuType>(MenuType.NORMAL);
   const [viewMode, setViewMode] = useState<ViewMode>('menu');
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
@@ -23,6 +23,8 @@ export default function Home() {
     getCurrentChecklist,
     getCurrentItems,
     resetChecklist,
+    resetAll,
+    checklistStates,
   } = useChecklist({ categories: checklistData });
 
   const currentChecklist = getCurrentChecklist();
@@ -30,13 +32,20 @@ export default function Home() {
 
   const handleMenuChange = (menu: MenuType) => {
     setActiveMenu(menu);
-    if (menu === 'normal') {
+    if (menu === MenuType.NORMAL) {
+      setViewMode('menu');
+    } else if (menu === MenuType.NON_NORMAL) {
       setViewMode('menu');
     }
   };
 
   const handleReset = () => {
-    if (currentChecklist) {
+    if (viewMode === 'menu') {
+      // メニュー画面では全てリセット
+      resetAll();
+      setActiveItemIndex(0);
+    } else if (currentChecklist) {
+      // チェックリスト画面では現在のチェックリストのみリセット
       resetChecklist(activeCategory, currentChecklist.id);
       setActiveItemIndex(0);
     }
@@ -47,6 +56,26 @@ export default function Home() {
     setViewMode('checklist');
     setActiveItemIndex(0);
   };
+
+  const handleNext = () => {
+    // 現在のチェックリストが完了しているか確認
+    const allChecked = currentItems.every(item => item.checked);
+    if (!allChecked) return;
+
+    // NORMALメニューのチェックリストを取得
+    const normalCategories = checklistData.filter(cat => cat.menuType === MenuType.NORMAL);
+    const currentIndex = normalCategories.findIndex(cat => cat.id === activeCategory);
+    
+    // 次のチェックリストがあれば移動
+    if (currentIndex >= 0 && currentIndex < normalCategories.length - 1) {
+      const nextCategory = normalCategories[currentIndex + 1];
+      setActiveCategory(nextCategory.id);
+      setActiveItemIndex(0);
+    }
+  };
+
+  // チェックリスト表示中かどうか
+  const isInChecklist = activeMenu === MenuType.NORMAL && viewMode === 'checklist';
 
   const handleToggleItem = (itemId: string) => {
     const itemIndex = currentItems.findIndex((item) => item.id === itemId);
@@ -74,28 +103,41 @@ export default function Home() {
   return (
     <CRTScreen>
       <TopMenu
-        activeMenu={activeMenu}
+        activeMenu={isInChecklist ? null : activeMenu}
         onMenuChange={handleMenuChange}
         onReset={handleReset}
       />
-      {activeMenu === 'normal' && viewMode === 'menu' && (
+      {activeMenu === MenuType.NORMAL && viewMode === 'menu' && (
         <ChecklistMenu
-          categories={checklistData}
+          categories={checklistData.filter(cat => cat.menuType === MenuType.NORMAL)}
           onSelect={handleChecklistSelect}
+          checklistStates={checklistStates}
         />
       )}
-      {activeMenu === 'normal' && viewMode === 'checklist' && (
+      {activeMenu === MenuType.NORMAL && viewMode === 'checklist' && (
+        <ChecklistDisplay
+          checklist={currentChecklist}
+          items={currentItems}
+          activeItemIndex={activeItemIndex}
+          onToggleItem={handleToggleItem}
+          onNext={handleNext}
+          showNextButton={true}
+        />
+      )}
+      {activeMenu === MenuType.NON_NORMAL && viewMode === 'menu' && (
+        <ChecklistMenu
+          categories={checklistData.filter(cat => cat.menuType === MenuType.NON_NORMAL)}
+          onSelect={handleChecklistSelect}
+          checklistStates={checklistStates}
+        />
+      )}
+      {activeMenu === MenuType.NON_NORMAL && viewMode === 'checklist' && (
         <ChecklistDisplay
           checklist={currentChecklist}
           items={currentItems}
           activeItemIndex={activeItemIndex}
           onToggleItem={handleToggleItem}
         />
-      )}
-      {activeMenu === 'non-normal' && (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="font-mono text-white text-lg">NON-NORMAL MENU</p>
-        </div>
       )}
     </CRTScreen>
   );

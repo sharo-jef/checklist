@@ -1,3 +1,5 @@
+import { CheckIcon } from './CheckIcon';
+
 interface ChecklistItemProps {
   item: string;
   value: string;
@@ -23,23 +25,7 @@ export function ChecklistItem({ item, value, checked, required, isActive, onTogg
 
         {/* チェックマーク */}
         <div className="w-5 h-5 flex items-center justify-center shrink-0 bg-[#6b7c94]">
-          {checked && (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2 8L6 12L14 4"
-                stroke="#1FEC3E"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
+          {checked && <CheckIcon />}
         </div>
 
         {/* テキスト */}
