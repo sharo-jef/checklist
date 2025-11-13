@@ -7,7 +7,7 @@ interface ChecklistMenuProps {
 
 export function ChecklistMenu({ categories, onSelect }: ChecklistMenuProps) {
   return (
-    <div className="flex-1 bg-[#213248] flex flex-col overflow-hidden">
+    <div className="flex-1 bg-[#1B2A3E] flex flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
           {categories.map((category) => (

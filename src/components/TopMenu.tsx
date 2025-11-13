@@ -6,7 +6,7 @@ interface TopMenuProps {
 
 export function TopMenu({ activeMenu, onMenuChange, onReset }: TopMenuProps) {
   return (
-    <div className="flex gap-3 p-3 bg-[#213248]">
+    <div className="flex gap-3 p-3 bg-[#1B2A3E]">
       <button
         onClick={() => onMenuChange('normal')}
         className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${

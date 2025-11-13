@@ -15,8 +15,8 @@ export function ChecklistDisplay({
   onToggleItem,
 }: ChecklistDisplayProps) {
   return (
-    <div className="flex-1 bg-[#213248] flex flex-col overflow-hidden">
-      <div className="px-4 bg-[#213248]">
+    <div className="flex-1 bg-[#1B2A3E] flex flex-col overflow-hidden">
+      <div className="px-4 bg-[#1B2A3E]">
         <h1 className="font-mono text-base text-white tracking-wide text-center">
           ▶ {checklist?.name || 'NO CHECKLIST'} ◀
         </h1>
@@ -28,7 +28,7 @@ export function ChecklistDisplay({
             {items.map((item, index) => {
               // 前の項目がすべてチェック済みかどうかを確認
               const canToggle = index === 0 || items.slice(0, index).every(prevItem => prevItem.checked);
-              
+
               return (
                 <ChecklistItem
                   key={item.id}
