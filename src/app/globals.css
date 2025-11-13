@@ -1,37 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1a1a2e;
-  --foreground: #00ff00;
-  
-  /* B787 Display Colors */
-  --display-bg: #1a1a2e;
-  --display-text: #00ff00;
-  --display-text-bright: #00ff00;
-  --display-highlight: #ff00ff;
-  --display-gray: #4a5568;
-  --display-white: #ffffff;
-  --menu-bg: #4a5568;
-  --menu-text: #000000;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* 参考画像の正確な色 */
+  --bg-dark: #2a3340;
+  --bg-display: #1e2633;
+  --menu-inactive: #4a5568;
+  --menu-active: #6b7c94;
+  --text-white: #ffffff;
+  --text-green: #00ff00;
+  --highlight-magenta: #ff00ff;
+  --check-gray: #6b7c94;
 }
 
 body {
-  background: var(--display-bg);
-  color: var(--display-text);
+  background: var(--bg-display);
+  color: var(--text-white);
   font-family: 'Courier New', Courier, monospace;
   margin: 0;
   padding: 0;
   overflow: hidden;
 }
 
-/* Remove default selection styles */
 ::selection {
   background: #ff00ff;
   color: #000000;
