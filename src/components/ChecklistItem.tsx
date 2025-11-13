@@ -24,14 +24,26 @@ export function ChecklistItem({ item, value, checked, required, isActive, onTogg
         {/* チェックマーク */}
         <div className="w-5 h-5 flex items-center justify-center shrink-0 bg-[#6b7c94]">
           {checked && (
-            <span className="text-lg font-bold text-[#00ff00]">
-              ✓
-            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2 8L6 12L14 4"
+                stroke="#1FEC3E"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           )}
         </div>
 
         {/* テキスト */}
-        <div className={`flex-1 font-mono text-sm tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${checked ? 'text-[#00ff00]' : 'text-white'}`}>
+        <div className={`flex-1 font-mono text-base tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${checked ? 'text-[#1FEC3E]' : 'text-white'}`}>
           <span className="shrink-0 font-bold">{item}</span>
           <span className="flex-1 min-w-0 overflow-hidden whitespace-nowrap">
             {'.'.repeat(400)}

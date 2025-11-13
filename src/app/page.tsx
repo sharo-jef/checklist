@@ -54,9 +54,16 @@ export default function Home() {
     
     toggleItem(activeCategory, currentChecklist?.id || '', itemId);
     
-    // チェックを入れた場合、次の項目に移動
-    if (!currentItem.checked && activeItemIndex < currentItems.length - 1) {
-      setActiveItemIndex(activeItemIndex + 1);
+    // チェックを入れた場合
+    if (!currentItem.checked) {
+      // 最後の項目の場合、アクティブインデックスを-1にして枠を消す
+      if (itemIndex === currentItems.length - 1) {
+        setActiveItemIndex(-1);
+      }
+      // 最後でない場合、次の項目に移動
+      else if (activeItemIndex < currentItems.length - 1) {
+        setActiveItemIndex(activeItemIndex + 1);
+      }
     }
     // チェックを外した場合、その項目に留まる
     else if (currentItem.checked) {
