@@ -66,7 +66,9 @@ export const checklistData: ChecklistCategory[] = [
         items: [
           { id: 'bsd-1', item: 'Gears', value: 'N', completed: false, required: true },
           { id: 'bsd-2', item: 'Parking brake', value: 'Set', completed: false, required: true },
-          { id: 'bsd-3', item: 'Doors', value: 'UNLOCKED', completed: false, required: true },
+          { id: 'bsd-3', item: 'Roof', value: 'CLOSED & LOCKED', completed: false, required: true },
+          { id: 'bsd-4', item: 'Doors', value: 'UNLOCKED', completed: false, required: true },
+          { id: 'bsd-5', item: 'Windows', value: 'CLOSED', completed: false, required: true },
         ],
       },
     ],
