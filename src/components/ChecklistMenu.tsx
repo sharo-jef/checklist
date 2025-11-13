@@ -17,10 +17,10 @@ export function ChecklistMenu({ categories, onSelect, checklistStates }: Checkli
   const isChecklistComplete = (category: ChecklistCategory): boolean => {
     const checklist = category.checklists[0];
     if (!checklist) return false;
-    
+
     const checklistState = checklistStates[category.id]?.[checklist.id];
     if (!checklistState) return false;
-    
+
     return checklist.items.every(item => checklistState[item.id] === true);
   };
 

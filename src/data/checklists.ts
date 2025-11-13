@@ -14,7 +14,8 @@ export const checklistData: ChecklistCategory[] = [
         name: 'PREDRIVE',
         items: [
           { id: 'pd-1', item: 'Parking brake', value: 'Set', completed: false, required: true },
-          { id: 'pd-2', item: 'Master switch', value: 'CUTOFF', completed: false, required: true },
+          { id: 'pd-2', item: 'Gears', value: 'N', completed: false, required: true },
+          { id: 'pd-3', item: 'Master switch', value: 'CUTOFF', completed: false, required: true },
         ],
       },
     ],
@@ -31,6 +32,7 @@ export const checklistData: ChecklistCategory[] = [
           { id: 'bs-1', item: 'Doors', value: 'LOCKED', completed: false, required: true },
           { id: 'bs-2', item: 'Mirrors', value: 'Set', completed: false, required: true },
           { id: 'bs-3', item: 'Belts', value: 'Set', completed: false, required: true },
+          { id: 'bs-4', item: 'Master switch', value: 'ACC', completed: false, required: true },
         ],
       },
     ],
@@ -44,7 +46,27 @@ export const checklistData: ChecklistCategory[] = [
         id: 'before-departure-check',
         name: 'BEFORE DEPARTURE',
         items: [
-          { id: 'bd-1', item: 'Lights', value: 'AS REQUIRED', completed: false, required: true },
+          { id: 'bd-1', item: 'Navigation', value: 'AS REQUIRED', completed: false, required: true },
+          { id: 'bd-2', item: 'Master switch', value: 'ON', completed: false, required: true },
+          { id: 'bd-3', item: 'Caution lights', value: 'Clear', completed: false, required: true },
+          { id: 'bd-4', item: 'Lights', value: 'AUTO', completed: false, required: true },
+          { id: 'bd-5', item: 'Parking brake', value: 'Release', completed: false, required: true },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'before-shutdown',
+    title: 'BEFORE SHUTDOWN',
+    menuType: MenuType.NORMAL,
+    checklists: [
+      {
+        id: 'before-shutdown-check',
+        name: 'BEFORE SHUTDOWN',
+        items: [
+          { id: 'bsd-1', item: 'Gears', value: 'N', completed: false, required: true },
+          { id: 'bsd-2', item: 'Parking brake', value: 'Set', completed: false, required: true },
+          { id: 'bsd-3', item: 'Doors', value: 'UNLOCKED', completed: false, required: true },
         ],
       },
     ],
