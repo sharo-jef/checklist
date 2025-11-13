@@ -1,15 +1,13 @@
 # Vehicle Digital Checklist
 
-自家用車の運転前チェックリスト Web アプリケーションです。
-レトロな CRT モニター風の UI で、安全運転のためのチェックリストシステムを提供します。
+自分用自家用車向けチェックリスト
 
 ## ✨ 特徴
 
-- 🖥️ **レトロ CRT ディスプレイ UI** - 緑色のモノクロームディスプレイ、スキャンライン効果
-- 🚗 **運転前チェックリスト** - 安全な運転のための確認項目
-- 📋 **タブベースのナビゲーション** - カテゴリ別に整理されたチェックリスト
+- 📋 **メニューベースのナビゲーション** - NORMAL/NON-NORMAL メニューで整理されたチェックリスト
 - 💾 **自動保存** - LocalStorage による状態の永続化
-- 📊 **進捗表示** - リアルタイムで完了状況を確認
+- ✅ **自動進行** - チェック完了時に次の項目へ自動移動
+- 🔄 **リセット機能** - メニュー全体または個別チェックリストのリセット
 - 🎨 **没入感のあるデザイン** - プロフェッショナルなディスプレイの雰囲気を再現
 - ⚙️ **自動ドット表示** - チェック項目のフォーマットを自動整形
 
@@ -57,10 +55,12 @@ checklist/
 │   ├── components/           # UIコンポーネント
 │   │   ├── CRTScreen.tsx     # CRT効果ラッパー
 │   │   ├── ChecklistDisplay.tsx
-│   │   ├── TabNavigation.tsx
 │   │   ├── ChecklistItem.tsx
-│   │   ├── ProgressDisplay.tsx
-│   │   └── Header.tsx
+│   │   ├── ChecklistMenu.tsx
+│   │   ├── CheckIcon.tsx
+│   │   ├── TabNavigation.tsx
+│   │   ├── TabButton.tsx
+│   │   └── TopMenu.tsx
 │   ├── hooks/                # カスタムフック
 │   │   ├── useChecklist.ts   # チェックリスト状態管理
 │   │   └── useLocalStorage.ts
@@ -76,9 +76,11 @@ checklist/
 
 ## 🛠️ 技術スタック
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **UI Library**: [React 19](https://react.dev/)
+- **Language**: [TypeScript 5](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Compiler**: [React Compiler](https://react.dev/learn/react-compiler)
 - **State Management**: React Hooks
 - **Storage**: LocalStorage API
 
@@ -87,6 +89,8 @@ checklist/
 1. **PREDRIVE** - 運転前の準備
 2. **BEFORE START** - エンジン始動前
 3. **BEFORE DEPARTURE** - 出発前
+4. **BEFORE SHUTDOWN** - シャットダウン前
+5. **ACCIDENT** - 事故時（非正常時チェックリスト）
 
 ## 🎨 デザインコンセプト
 
@@ -116,29 +120,21 @@ checklist/
 チェック項目は `item`（項目名）と `value`（値/ステータス）を分けて記述すると、自動的にドットが挿入されます：
 
 ```typescript
+import { ChecklistCategory, MenuType } from '@/types/checklist';
+
 {
   id: 'custom-category',
-  title: 'Custom Category',
+  title: 'CUSTOM CATEGORY',
+  menuType: MenuType.NORMAL, // または MenuType.NON_NORMAL（非正常時）
   checklists: [
     {
       id: 'custom-list',
-      name: 'Custom Checklist',
-      phase: 'Custom Phase',
+      name: 'CUSTOM CHECKLIST',
       items: [
         // 表示: "Parking brake..........Set"
         { id: 'item-1', item: 'Parking brake', value: 'Set', completed: false, required: true },
         // 表示: "Master switch..........CUTOFF"
         { id: 'item-2', item: 'Master switch', value: 'CUTOFF', completed: false, required: true }
-      ]
-    }
-  ]
-}
-    {
-      id: 'custom-list',
-      name: 'Custom Checklist',
-      phase: 'Custom Phase',
-      items: [
-        { id: 'item-1', text: 'Check item...', completed: false, required: true }
       ]
     }
   ]
