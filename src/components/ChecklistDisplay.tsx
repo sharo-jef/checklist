@@ -8,6 +8,7 @@ interface ChecklistDisplayProps {
   onToggleItem: (itemId: string) => void;
   onNext?: () => void;
   showNextButton?: boolean;
+  hasNextChecklist?: boolean;
 }
 
 export function ChecklistDisplay({
@@ -17,8 +18,10 @@ export function ChecklistDisplay({
   onToggleItem,
   onNext,
   showNextButton = false,
+  hasNextChecklist = false,
 }: ChecklistDisplayProps) {
   const allItemsChecked = items.length > 0 && items.every(item => item.checked);
+  const canGoNext = allItemsChecked && hasNextChecklist;
 
   return (
     <div className="flex-1 bg-[#1B2A3E] flex flex-col overflow-hidden">
@@ -59,9 +62,9 @@ export function ChecklistDisplay({
         <div className="flex bg-[#1B2A3E] p-3">
           <button
             onClick={onNext}
-            disabled={!allItemsChecked}
+            disabled={!canGoNext}
             className={`px-6 py-2 text-center font-mono text-sm font-bold tracking-widest ${
-              allItemsChecked
+              canGoNext
                 ? 'bg-[#6b7c94] text-white cursor-pointer'
                 : 'bg-[#4a5568] text-gray-500 cursor-not-allowed'
             }`}

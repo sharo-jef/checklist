@@ -74,6 +74,13 @@ export default function Home() {
     }
   };
 
+  // 次のチェックリストがあるかどうかを判定
+  const hasNextChecklist = () => {
+    const normalCategories = checklistData.filter(cat => cat.menuType === MenuType.NORMAL);
+    const currentIndex = normalCategories.findIndex(cat => cat.id === activeCategory);
+    return currentIndex >= 0 && currentIndex < normalCategories.length - 1;
+  };
+
   // チェックリスト表示中かどうか
   const isInChecklist = activeMenu === MenuType.NORMAL && viewMode === 'checklist';
 
@@ -122,6 +129,7 @@ export default function Home() {
           onToggleItem={handleToggleItem}
           onNext={handleNext}
           showNextButton={true}
+          hasNextChecklist={hasNextChecklist()}
         />
       )}
       {activeMenu === MenuType.NON_NORMAL && viewMode === 'menu' && (
