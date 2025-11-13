@@ -1,10 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-import {
-  ChecklistCategory,
-  ChecklistItem,
-  Progress,
-} from '@/types/checklist';
-import { loadFromStorage, setItemState } from '@/utils/storage';
+import { useState, useCallback, useEffect } from "react";
+import { ChecklistCategory, ChecklistItem, Progress } from "@/types/checklist";
+import { loadFromStorage, setItemState } from "@/utils/storage";
 
 interface UseChecklistProps {
   categories: ChecklistCategory[];
@@ -14,9 +10,9 @@ interface UseChecklistProps {
  * チェックリスト状態管理フック
  */
 export function useChecklist({ categories }: UseChecklistProps) {
-  const [activeCategory, setActiveCategory] = useState(categories[0]?.id || '');
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.id || "");
   const [activeChecklist, setActiveChecklist] = useState(
-    categories[0]?.checklists[0]?.id || ''
+    categories[0]?.checklists[0]?.id || ""
   );
 
   // 初期状態は空オブジェクト（サーバーとクライアントで一致）
@@ -49,12 +45,18 @@ export function useChecklist({ categories }: UseChecklistProps) {
         // チェックを外す場合、それ以降の項目もすべて外す
         if (currentState && !newState) {
           const category = categories.find((c) => c.id === categoryId);
-          const checklist = category?.checklists.find((cl) => cl.id === checklistId);
-          
+          const checklist = category?.checklists.find(
+            (cl) => cl.id === checklistId
+          );
+
           if (checklist) {
-            const itemIndex = checklist.items.findIndex((item) => item.id === itemId);
-            const updatedChecklistState = { ...prev[categoryId]?.[checklistId] };
-            
+            const itemIndex = checklist.items.findIndex(
+              (item) => item.id === itemId
+            );
+            const updatedChecklistState = {
+              ...prev[categoryId]?.[checklistId],
+            };
+
             // 現在の項目以降をすべてfalseに設定
             checklist.items.slice(itemIndex).forEach((item) => {
               updatedChecklistState[item.id] = false;
@@ -105,7 +107,9 @@ export function useChecklist({ categories }: UseChecklistProps) {
   const getProgress = useCallback(
     (categoryId: string, checklistId: string): Progress => {
       const category = categories.find((c) => c.id === categoryId);
-      const checklist = category?.checklists.find((cl) => cl.id === checklistId);
+      const checklist = category?.checklists.find(
+        (cl) => cl.id === checklistId
+      );
 
       if (!checklist) {
         return { completed: 0, total: 0, percentage: 0 };
@@ -132,13 +136,16 @@ export function useChecklist({ categories }: UseChecklistProps) {
   }, [categories, activeCategory, activeChecklist]);
 
   // 現在アクティブなチェックリストのアイテムを取得（状態付き）
-  const getCurrentItems = useCallback((): (ChecklistItem & { checked: boolean })[] => {
+  const getCurrentItems = useCallback((): (ChecklistItem & {
+    checked: boolean;
+  })[] => {
     const checklist = getCurrentChecklist();
     if (!checklist) return [];
 
     return checklist.items.map((item) => ({
       ...item,
-      checked: checklistStates[activeCategory]?.[activeChecklist]?.[item.id] ?? false,
+      checked:
+        checklistStates[activeCategory]?.[activeChecklist]?.[item.id] ?? false,
     }));
   }, [getCurrentChecklist, checklistStates, activeCategory, activeChecklist]);
 
@@ -146,8 +153,8 @@ export function useChecklist({ categories }: UseChecklistProps) {
   const resetAll = useCallback(() => {
     setChecklistStates({});
     // LocalStorageもクリア
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('b747-checklist-state');
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("b747-checklist-state");
     }
   }, []);
 
@@ -171,14 +178,14 @@ export function useChecklist({ categories }: UseChecklistProps) {
     activeChecklist,
     categories,
     checklistStates,
-    
+
     // アクション
     setActiveCategory: handleCategoryChange,
     setActiveChecklist,
     toggleItem,
     resetAll,
     resetChecklist,
-    
+
     // 計算値
     getProgress,
     getCurrentChecklist,

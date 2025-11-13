@@ -1,13 +1,13 @@
-import { StoredData } from '@/types/checklist';
+import { StoredData } from "@/types/checklist";
 
-const STORAGE_KEY = 'b747-checklist-state';
-const STORAGE_VERSION = '1.0.0';
+const STORAGE_KEY = "b747-checklist-state";
+const STORAGE_VERSION = "1.0.0";
 
 /**
  * LocalStorageからデータを読み込む
  */
 export function loadFromStorage(): StoredData | null {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return null;
   }
 
@@ -18,16 +18,16 @@ export function loadFromStorage(): StoredData | null {
     }
 
     const data: StoredData = JSON.parse(stored);
-    
+
     // バージョンチェック
     if (data.version !== STORAGE_VERSION) {
-      console.warn('Storage version mismatch. Resetting data.');
+      console.warn("Storage version mismatch. Resetting data.");
       return null;
     }
 
     return data;
   } catch (error) {
-    console.error('Failed to load from storage:', error);
+    console.error("Failed to load from storage:", error);
     return null;
   }
 }
@@ -36,7 +36,7 @@ export function loadFromStorage(): StoredData | null {
  * LocalStorageにデータを保存する
  */
 export function saveToStorage(data: Partial<StoredData>): boolean {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return false;
   }
 
@@ -45,13 +45,14 @@ export function saveToStorage(data: Partial<StoredData>): boolean {
     const newData: StoredData = {
       version: STORAGE_VERSION,
       lastUpdated: Date.now(),
-      checklistStates: data.checklistStates || currentData?.checklistStates || {},
+      checklistStates:
+        data.checklistStates || currentData?.checklistStates || {},
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
     return true;
   } catch (error) {
-    console.error('Failed to save to storage:', error);
+    console.error("Failed to save to storage:", error);
     return false;
   }
 }
@@ -60,7 +61,7 @@ export function saveToStorage(data: Partial<StoredData>): boolean {
  * LocalStorageをクリアする
  */
 export function clearStorage(): boolean {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return false;
   }
 
@@ -68,7 +69,7 @@ export function clearStorage(): boolean {
     localStorage.removeItem(STORAGE_KEY);
     return true;
   } catch (error) {
-    console.error('Failed to clear storage:', error);
+    console.error("Failed to clear storage:", error);
     return false;
   }
 }

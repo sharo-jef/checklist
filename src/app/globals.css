@@ -15,7 +15,7 @@
 body {
   background: var(--bg-display);
   color: var(--text-white);
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -35,4 +35,3 @@ body {
   background: #ff00ff;
   color: #000000;
 }
-

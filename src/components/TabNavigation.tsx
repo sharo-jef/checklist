@@ -1,5 +1,5 @@
-import { ChecklistCategory } from '@/types/checklist';
-import { TabButton } from './TabButton';
+import { ChecklistCategory } from "@/types/checklist";
+import { TabButton } from "./TabButton";
 
 interface TabNavigationProps {
   categories: ChecklistCategory[];

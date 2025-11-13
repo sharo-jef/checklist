@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
-  basePath: '/checklist',
+  output: "export",
+  basePath: "/checklist",
   images: {
     unoptimized: true,
   },

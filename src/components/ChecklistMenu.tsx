@@ -1,5 +1,5 @@
-import { ChecklistCategory } from '@/types/checklist';
-import { CheckIcon } from './CheckIcon';
+import { ChecklistCategory } from "@/types/checklist";
+import { CheckIcon } from "./CheckIcon";
 
 interface ChecklistMenuProps {
   categories: ChecklistCategory[];
@@ -13,7 +13,11 @@ interface ChecklistMenuProps {
   };
 }
 
-export function ChecklistMenu({ categories, onSelect, checklistStates }: ChecklistMenuProps) {
+export function ChecklistMenu({
+  categories,
+  onSelect,
+  checklistStates,
+}: ChecklistMenuProps) {
   const isChecklistComplete = (category: ChecklistCategory): boolean => {
     const checklist = category.checklists[0];
     if (!checklist) return false;
@@ -21,7 +25,7 @@ export function ChecklistMenu({ categories, onSelect, checklistStates }: Checkli
     const checklistState = checklistStates[category.id]?.[checklist.id];
     if (!checklistState) return false;
 
-    return checklist.items.every(item => checklistState[item.id] === true);
+    return checklist.items.every((item) => checklistState[item.id] === true);
   };
 
   return (
@@ -35,7 +39,7 @@ export function ChecklistMenu({ categories, onSelect, checklistStates }: Checkli
                 key={category.id}
                 onClick={() => onSelect(category.id)}
                 className={`w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 font-mono text-base font-bold flex items-center gap-2 ${
-                  isComplete ? 'text-[#1FEC3E]' : 'text-white'
+                  isComplete ? "text-[#1FEC3E]" : "text-white"
                 }`}
               >
                 <div className="w-4 h-4 shrink-0">

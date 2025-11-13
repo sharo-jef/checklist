@@ -3,7 +3,7 @@ interface CheckIconProps {
   size?: number;
 }
 
-export function CheckIcon({ color = '#1FEC3E', size = 16 }: CheckIconProps) {
+export function CheckIcon({ color = "#1FEC3E", size = 16 }: CheckIconProps) {
   return (
     <svg
       width={size}

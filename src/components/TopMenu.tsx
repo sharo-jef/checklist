@@ -1,4 +1,4 @@
-import { MenuType } from '@/types/checklist';
+import { MenuType } from "@/types/checklist";
 
 interface TopMenuProps {
   activeMenu: MenuType | null;
@@ -13,8 +13,8 @@ export function TopMenu({ activeMenu, onMenuChange, onReset }: TopMenuProps) {
         onClick={() => onMenuChange(MenuType.NORMAL)}
         className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${
           activeMenu === MenuType.NORMAL
-            ? 'bg-[#6b7c94] text-white'
-            : 'bg-[#4a5568] text-white'
+            ? "bg-[#6b7c94] text-white"
+            : "bg-[#4a5568] text-white"
         }`}
       >
         NORMAL MENU
@@ -29,8 +29,8 @@ export function TopMenu({ activeMenu, onMenuChange, onReset }: TopMenuProps) {
         onClick={() => onMenuChange(MenuType.NON_NORMAL)}
         className={`flex-1 py-2 text-center font-mono text-sm font-bold tracking-widest ${
           activeMenu === MenuType.NON_NORMAL
-            ? 'bg-[#6b7c94] text-white'
-            : 'bg-[#4a5568] text-white'
+            ? "bg-[#6b7c94] text-white"
+            : "bg-[#4a5568] text-white"
         }`}
       >
         NON-NORMAL MENU
