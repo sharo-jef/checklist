@@ -1,60 +1,59 @@
 import { ChecklistItem } from './ChecklistItem';
-import { ProgressDisplay } from './ProgressDisplay';
-import { Header } from './Header';
-import { Checklist, Progress } from '@/types/checklist';
+import { Checklist } from '@/types/checklist';
 
 interface ChecklistDisplayProps {
   checklist: Checklist | undefined;
   items: Array<{ id: string; item: string; value: string; checked: boolean; required?: boolean }>;
-  progress: Progress;
+  activeItemIndex: number;
   onToggleItem: (itemId: string) => void;
-  onReset?: () => void;
+  onBack: () => void;
 }
 
 export function ChecklistDisplay({
   checklist,
   items,
-  progress,
+  activeItemIndex,
   onToggleItem,
-  onReset,
+  onBack,
 }: ChecklistDisplayProps) {
   return (
-    <div className="bg-black/80 backdrop-blur-sm">
-      <Header checklist={checklist} />
+    <div className="flex-1 bg-[#1a1a2e] flex flex-col">
+      <div className="px-4 py-4 border-b-2 border-gray-600">
+        <h1 className="font-mono text-xl text-white font-bold tracking-wide text-center">
+          ▶{checklist?.name || 'NO CHECKLIST'}◀
+        </h1>
+      </div>
       
-      <div className="max-h-[60vh] overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         {items.length > 0 ? (
-          <div className="divide-y divide-green-900/30">
-            {items.map((item) => (
+          <div>
+            {items.map((item, index) => (
               <ChecklistItem
                 key={item.id}
                 item={item.item}
                 value={item.value}
                 checked={item.checked}
                 required={item.required}
+                isActive={index === activeItemIndex}
                 onToggle={() => onToggleItem(item.id)}
               />
             ))}
           </div>
         ) : (
           <div className="py-12 text-center">
-            <p className="font-mono text-green-600">NO ITEMS IN CHECKLIST</p>
+            <p className="font-mono text-white">NO ITEMS IN CHECKLIST</p>
           </div>
         )}
       </div>
       
-      <ProgressDisplay progress={progress} />
-      
-      {onReset && (
-        <div className="px-4 py-3 border-t border-green-800/50 flex justify-end">
-          <button
-            onClick={onReset}
-            className="px-4 py-2 font-mono text-xs text-green-600 hover:text-green-400 border border-green-800/50 hover:border-green-600 transition-colors"
-          >
-            RESET CHECKLIST
-          </button>
-        </div>
-      )}
+      <div className="p-4">
+        <button
+          onClick={onBack}
+          className="w-full px-4 py-3 bg-gray-600 text-black font-bold text-sm"
+        >
+          BACK
+        </button>
+      </div>
     </div>
   );
 }
