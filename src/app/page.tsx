@@ -30,6 +30,19 @@ export default function Home() {
   const currentChecklist = getCurrentChecklist();
   const currentItems = getCurrentItems();
 
+  // カテゴリの最初の未チェック項目のインデックスを取得
+  const getFirstUncheckedIndex = (categoryId: string) => {
+    const category = checklistData.find((cat) => cat.id === categoryId);
+    const checklist = category?.checklists[0];
+
+    if (!checklist) return -1;
+
+    const firstUncheckedIndex = checklist.items.findIndex(
+      (item) => !checklistStates[categoryId]?.[checklist.id]?.[item.id]
+    );
+    return firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1;
+  };
+
   const handleMenuChange = (menu: MenuType) => {
     setActiveMenu(menu);
     if (menu === MenuType.NORMAL) {
@@ -54,7 +67,7 @@ export default function Home() {
   const handleChecklistSelect = (categoryId: string) => {
     setActiveCategory(categoryId);
     setViewMode("checklist");
-    setActiveItemIndex(0);
+    setActiveItemIndex(getFirstUncheckedIndex(categoryId));
   };
 
   const handleNext = () => {
@@ -74,7 +87,7 @@ export default function Home() {
     if (currentIndex >= 0 && currentIndex < normalCategories.length - 1) {
       const nextCategory = normalCategories[currentIndex + 1];
       setActiveCategory(nextCategory.id);
-      setActiveItemIndex(0);
+      setActiveItemIndex(getFirstUncheckedIndex(nextCategory.id));
     }
   };
 
