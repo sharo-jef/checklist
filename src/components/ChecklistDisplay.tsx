@@ -69,17 +69,17 @@ export function ChecklistDisplay({
 
       {showNextButton && (
         <div className="flex gap-3 bg-[#09090C] p-3">
-          <button
-            onClick={onNext}
-            disabled={!canGoNext}
-            className={`flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none ${
-              canGoNext
-                ? "bg-[#6b7c94] text-white cursor-pointer"
-                : "bg-[#4a5568] text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            NORMAL
-          </button>
+          <div className="flex-1">
+            {canGoNext && (
+              <button
+                onClick={onNext}
+                className="w-full py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white flex items-center justify-center"
+                style={{ height: "100%" }}
+              >
+                NORMAL
+              </button>
+            )}
+          </div>
           <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
             ITEM
             <br />
