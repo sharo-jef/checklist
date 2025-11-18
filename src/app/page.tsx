@@ -83,7 +83,9 @@ export default function Home() {
 
   const handleNext = () => {
     // 現在のチェックリストが完了しているか確認
-    const allChecked = currentItems.every((item) => item.status === "checked");
+    const allChecked = currentItems.every(
+      (item) => item.status === "checked" || item.status === "overridden"
+    );
     if (!allChecked) return;
 
     // NORMALメニューのチェックリストを取得
