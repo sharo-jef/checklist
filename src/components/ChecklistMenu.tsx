@@ -29,7 +29,7 @@ export function ChecklistMenu({
   };
 
   return (
-    <div className="flex-1 bg-[#1B2A3E] flex flex-col overflow-hidden">
+    <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto p-4">
         <div className="space-y-2">
           {categories.map((category) => {
@@ -38,8 +38,8 @@ export function ChecklistMenu({
               <button
                 key={category.id}
                 onClick={() => onSelect(category.id)}
-                className={`w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 font-mono text-base font-bold flex items-center gap-2 ${
-                  isComplete ? "text-[#1FEC3E]" : "text-white"
+                className={`w-full text-left px-4 py-1 bg-gray-700 hover:bg-gray-600 font-mono text-2xl font-bold flex items-center gap-2 ${
+                  isComplete ? "text-(--text-green)" : "text-white"
                 }`}
               >
                 <div className="w-4 h-4 shrink-0">

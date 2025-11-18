@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* 参考画像の正確な色 */
-  --bg-display: #213248;
-  --menu-bg: #213248;
+  --font-mono: var(--font-barlow-condensed), "Courier New", Courier, monospace;
+  --bg-display: #09090c;
+  --menu-bg: #09090c;
   --menu-inactive: #4a5568;
   --menu-active: #6b7c94;
   --text-white: #ffffff;
-  --text-green: #00ff00;
-  --highlight-magenta: #ff00ff;
+  --text-green: #0bce0e;
+  --text-cyan: #0baacf;
+  --highlight-magenta: #e165e0;
   --check-gray: #6b7c94;
 }
 
 body {
   background: var(--bg-display);
   color: var(--text-white);
-  font-family: "Courier New", Courier, monospace;
+  font-family: var(--font-barlow-condensed), "Courier New", Courier, monospace;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -27,11 +28,11 @@ body {
 }
 
 ::selection {
-  background: #ff00ff;
+  background: #e165e0;
   color: #000000;
 }
 
 ::-moz-selection {
-  background: #ff00ff;
+  background: #e165e0;
   color: #000000;
 }

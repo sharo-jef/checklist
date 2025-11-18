@@ -31,8 +31,8 @@ export function ChecklistDisplay({
   const canGoNext = allItemsChecked && hasNextChecklist;
 
   return (
-    <div className="flex-1 bg-[#1B2A3E] flex flex-col overflow-hidden">
-      <div className="px-4 pb-2 bg-[#1B2A3E]">
+    <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden">
+      <div className="px-4 pb-2 bg-[#09090C]">
         <h1 className="font-mono text-base text-white tracking-wide text-center">
           ▶ {checklist?.name || "NO CHECKLIST"} ◀
         </h1>
@@ -68,17 +68,32 @@ export function ChecklistDisplay({
       </div>
 
       {showNextButton && (
-        <div className="flex bg-[#1B2A3E] p-3">
+        <div className="flex gap-3 bg-[#09090C] p-3">
           <button
             onClick={onNext}
             disabled={!canGoNext}
-            className={`px-6 py-2 text-center font-mono text-sm font-bold tracking-widest ${
+            className={`flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none ${
               canGoNext
                 ? "bg-[#6b7c94] text-white cursor-pointer"
                 : "bg-[#4a5568] text-gray-500 cursor-not-allowed"
             }`}
           >
             NORMAL
+          </button>
+          <button className="flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none bg-[#4a5568] text-white">
+            ITEM
+            <br />
+            OVRD
+          </button>
+          <button className="flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none bg-[#4a5568] text-white">
+            CHKL
+            <br />
+            OVRD
+          </button>
+          <button className="flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none bg-[#4a5568] text-white">
+            CHKL
+            <br />
+            RESET
           </button>
         </div>
       )}

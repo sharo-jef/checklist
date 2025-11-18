@@ -3,7 +3,7 @@ interface CheckIconProps {
   size?: number;
 }
 
-export function CheckIcon({ color = "#1FEC3E", size = 16 }: CheckIconProps) {
+export function CheckIcon({ size = 16 }: CheckIconProps) {
   return (
     <svg
       width={size}
@@ -14,7 +14,7 @@ export function CheckIcon({ color = "#1FEC3E", size = 16 }: CheckIconProps) {
     >
       <path
         d="M2 8L6 12L14 4"
-        stroke={color}
+        stroke="var(--text-green)"
         strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"

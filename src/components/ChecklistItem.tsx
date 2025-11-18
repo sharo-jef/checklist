@@ -22,7 +22,9 @@ export function ChecklistItem({
       <div
         onClick={onToggle}
         className={`flex items-center py-3.5 px-3 cursor-pointer ${
-          isActive ? "border-2 border-[#ff00ff]" : "border-2 border-transparent"
+          isActive
+            ? "border-2 border-(--highlight-magenta)"
+            : "border-2 border-transparent"
         }`}
       >
         {/* 自動チェック用の灰色背景（required=falseの場合のみ表示） */}
@@ -35,11 +37,11 @@ export function ChecklistItem({
 
         {/* テキスト */}
         <div
-          className={`flex-1 font-mono text-[17px] tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${checked ? "text-[#1FEC3E]" : "text-white"}`}
+          className={`flex-1 font-mono text-[20px] tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${checked ? "text-(--text-green)" : "text-white"}`}
         >
           <span className="shrink-0 font-bold">{item}</span>
           <span className="flex-1 min-w-0 overflow-hidden whitespace-nowrap">
-            {".".repeat(400)}
+            {". ".repeat(400)}
           </span>
           <span className="shrink-0 font-bold">{value}</span>
         </div>

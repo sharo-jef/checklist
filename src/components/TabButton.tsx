@@ -9,7 +9,7 @@ export function TabButton({ title, active, onClick }: TabButtonProps) {
     <button
       onClick={onClick}
       className={`
-        px-4 py-2 font-mono text-sm tracking-wide transition-all
+        px-4 py-1 font-mono text-xl tracking-wide transition-all
         border-b-2 whitespace-nowrap
         ${
           active
