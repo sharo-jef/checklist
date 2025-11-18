@@ -12,7 +12,7 @@ export function TopMenu({ activeMenu, onMenuChange }: TopMenuProps) {
         onClick={() => onMenuChange(MenuType.NORMAL)}
         className={`flex-1 py-1 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white ${
           activeMenu === MenuType.NORMAL
-            ? "bg-green-600 text-white"
+            ? "bg-(--menu-green) text-white"
             : "bg-[#4a5568] text-white"
         }`}
       >
@@ -22,7 +22,7 @@ export function TopMenu({ activeMenu, onMenuChange }: TopMenuProps) {
         onClick={() => onMenuChange(MenuType.RESETS)}
         className={`flex-1 py-1 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white ${
           activeMenu === MenuType.RESETS
-            ? "bg-green-600 text-white"
+            ? "bg-(--menu-green) text-white"
             : "bg-[#4a5568] text-white"
         }`}
       >
@@ -32,7 +32,7 @@ export function TopMenu({ activeMenu, onMenuChange }: TopMenuProps) {
         onClick={() => onMenuChange(MenuType.NON_NORMAL)}
         className={`flex-1 py-1 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white ${
           activeMenu === MenuType.NON_NORMAL
-            ? "bg-green-600 text-white"
+            ? "bg-(--menu-green) text-white"
             : "bg-[#4a5568] text-white"
         }`}
       >

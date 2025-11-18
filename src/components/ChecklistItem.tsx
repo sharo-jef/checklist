@@ -1,9 +1,10 @@
 import { CheckIcon } from "./CheckIcon";
+import { ChecklistItemStatus } from "@/types/checklist";
 
 interface ChecklistItemProps {
   item: string;
   value: string;
-  checked: boolean;
+  status: ChecklistItemStatus;
   required?: boolean;
   isActive: boolean;
   onToggle: () => void;
@@ -12,11 +13,14 @@ interface ChecklistItemProps {
 export function ChecklistItem({
   item,
   value,
-  checked,
+  status,
   required,
   isActive,
   onToggle,
 }: ChecklistItemProps) {
+  const isChecked = status === "checked";
+  const isOverridden = status === "overridden";
+
   return (
     <div className="px-4">
       <div
@@ -31,13 +35,23 @@ export function ChecklistItem({
         {!required && <div className="w-6 h-6 bg-[#6b7c94] shrink-0 -mr-6" />}
 
         {/* チェックマーク */}
-        <div className="w-6 h-6 flex items-center justify-center shrink-0 bg-[#6b7c94]">
-          {checked && <CheckIcon />}
+        <div
+          className={`w-6 h-6 flex items-center justify-center shrink-0 bg-[#6b7c94] ${
+            isOverridden ? "border-2 border-(--text-cyan)" : ""
+          }`}
+        >
+          {isChecked && <CheckIcon />}
         </div>
 
         {/* テキスト */}
         <div
-          className={`flex-1 font-mono text-[20px] tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${checked ? "text-(--text-green)" : "text-white"}`}
+          className={`flex-1 font-mono text-[20px] tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${
+            isChecked
+              ? "text-(--text-green)"
+              : isOverridden
+                ? "text-(--text-cyan)"
+                : "text-white"
+          }`}
         >
           <span className="shrink-0">{item}</span>
           <span className="flex-1 min-w-0 overflow-hidden whitespace-nowrap">

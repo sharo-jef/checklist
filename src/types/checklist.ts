@@ -12,6 +12,11 @@ export enum MenuType {
 }
 
 /**
+ * チェックリスト項目のステータス
+ */
+export type ChecklistItemStatus = "unchecked" | "checked" | "overridden";
+
+/**
  * チェックリスト項目
  */
 export interface ChecklistItem {
@@ -21,7 +26,7 @@ export interface ChecklistItem {
   item: string;
   /** ステータス/値（右側） */
   value: string;
-  /** 完了状態 */
+  /** 完了状態（後方互換性のため残す） */
   completed: boolean;
   /** 必須項目フラグ */
   required?: boolean;
@@ -89,11 +94,11 @@ export interface StoredData {
   version: string;
   /** 最終更新日時 */
   lastUpdated: number;
-  /** チェックリスト状態（カテゴリID -> チェックリストID -> アイテムID -> completed） */
-  checklistStates: {
+  /** チェックリスト状態（カテゴリID -> チェックリストID -> アイテムID -> status） */
+  itemStates: {
     [categoryId: string]: {
       [checklistId: string]: {
-        [itemId: string]: boolean;
+        [itemId: string]: ChecklistItemStatus;
       };
     };
   };

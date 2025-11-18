@@ -13,7 +13,7 @@ export function TabNavigation({
   onCategoryChange,
 }: TabNavigationProps) {
   return (
-    <div className="border-b border-green-800/50 overflow-x-auto">
+    <div className="border-b border-(--menu-green)/50 overflow-x-auto">
       <div className="flex gap-1 min-w-max px-4">
         {categories.map((category) => (
           <TabButton

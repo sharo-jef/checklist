@@ -20,13 +20,13 @@ export default function Home() {
   const {
     activeCategory,
     setActiveCategory,
-    toggleItem,
+    updateItemStatus,
     getCurrentChecklist,
     getCurrentItems,
     resetAll,
     resetNormal,
     resetNonNormal,
-    checklistStates,
+    itemStates,
   } = useChecklist({ categories: checklistData });
 
   const currentChecklist = getCurrentChecklist();
@@ -40,7 +40,9 @@ export default function Home() {
     if (!checklist) return -1;
 
     const firstUncheckedIndex = checklist.items.findIndex(
-      (item) => !checklistStates[categoryId]?.[checklist.id]?.[item.id]
+      (item) =>
+        (itemStates[categoryId]?.[checklist.id]?.[item.id] ?? "unchecked") ===
+        "unchecked"
     );
     return firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1;
   };
@@ -79,7 +81,7 @@ export default function Home() {
 
   const handleNext = () => {
     // 現在のチェックリストが完了しているか確認
-    const allChecked = currentItems.every((item) => item.checked);
+    const allChecked = currentItems.every((item) => item.status === "checked");
     if (!allChecked) return;
 
     // NORMALメニューのチェックリストを取得
@@ -117,10 +119,30 @@ export default function Home() {
     const itemIndex = currentItems.findIndex((item) => item.id === itemId);
     const currentItem = currentItems[itemIndex];
 
-    toggleItem(activeCategory, currentChecklist?.id || "", itemId);
+    // overriddenの項目の場合はoverriddenを外す（それ以降もuncheckedになる処理はupdateItemStatusで行われる）
+    if (currentItem.status === "overridden") {
+      updateItemStatus(
+        activeCategory,
+        currentChecklist?.id || "",
+        itemId,
+        "unchecked"
+      );
+      setActiveItemIndex(itemIndex);
+      return;
+    }
+
+    // unchecked <-> checked をトグル
+    const newStatus =
+      currentItem.status === "checked" ? "unchecked" : "checked";
+    updateItemStatus(
+      activeCategory,
+      currentChecklist?.id || "",
+      itemId,
+      newStatus
+    );
 
     // チェックを入れた場合
-    if (!currentItem.checked) {
+    if (newStatus === "checked") {
       // 最後の項目の場合、アクティブインデックスを-1にして枠を消す
       if (itemIndex === currentItems.length - 1) {
         setActiveItemIndex(-1);
@@ -131,7 +153,38 @@ export default function Home() {
       }
     }
     // チェックを外した場合、その項目に留まる
-    else if (currentItem.checked) {
+    else {
+      setActiveItemIndex(itemIndex);
+    }
+  };
+
+  const handleItemOverride = (itemId: string) => {
+    const itemIndex = currentItems.findIndex((item) => item.id === itemId);
+    const currentItem = currentItems[itemIndex];
+
+    // unchecked/checked <-> overridden をトグル
+    const newStatus =
+      currentItem.status === "overridden" ? "unchecked" : "overridden";
+    updateItemStatus(
+      activeCategory,
+      currentChecklist?.id || "",
+      itemId,
+      newStatus
+    );
+
+    // オーバーライドした場合、次の項目に移動
+    if (newStatus === "overridden") {
+      // 最後の項目の場合、アクティブインデックスを-1にして枠を消す
+      if (itemIndex === currentItems.length - 1) {
+        setActiveItemIndex(-1);
+      }
+      // 最後でない場合、次の項目に移動
+      else if (activeItemIndex < currentItems.length - 1) {
+        setActiveItemIndex(activeItemIndex + 1);
+      }
+    }
+    // オーバーライドを解除した場合、その項目に留まる
+    else {
       setActiveItemIndex(itemIndex);
     }
   };
@@ -148,7 +201,7 @@ export default function Home() {
             (cat) => cat.menuType === MenuType.NORMAL
           )}
           onSelect={handleChecklistSelect}
-          checklistStates={checklistStates}
+          itemStates={itemStates}
           menuType={MenuType.NORMAL}
         />
       )}
@@ -158,6 +211,7 @@ export default function Home() {
           items={currentItems}
           activeItemIndex={activeItemIndex}
           onToggleItem={handleToggleItem}
+          onItemOverride={handleItemOverride}
           onNext={handleNext}
           showNextButton={true}
           hasNextChecklist={hasNextChecklist()}
@@ -176,7 +230,7 @@ export default function Home() {
             (cat) => cat.menuType === MenuType.NON_NORMAL
           )}
           onSelect={handleChecklistSelect}
-          checklistStates={checklistStates}
+          itemStates={itemStates}
           menuType={MenuType.NON_NORMAL}
         />
       )}
@@ -186,6 +240,7 @@ export default function Home() {
           items={currentItems}
           activeItemIndex={activeItemIndex}
           onToggleItem={handleToggleItem}
+          onItemOverride={handleItemOverride}
         />
       )}
     </CRTScreen>

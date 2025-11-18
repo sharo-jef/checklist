@@ -1,6 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { ChecklistCategory, ChecklistItem, Progress } from "@/types/checklist";
-import { loadFromStorage, setItemState } from "@/utils/storage";
+import {
+  ChecklistCategory,
+  ChecklistItem,
+  ChecklistItemStatus,
+  Progress,
+} from "@/types/checklist";
+import { loadFromStorage, setItemStatus } from "@/utils/storage";
 
 interface UseChecklistProps {
   categories: ChecklistCategory[];
@@ -16,10 +21,10 @@ export function useChecklist({ categories }: UseChecklistProps) {
   );
 
   // 初期状態は空オブジェクト（サーバーとクライアントで一致）
-  const [checklistStates, setChecklistStates] = useState<{
+  const [itemStates, setItemStates] = useState<{
     [categoryId: string]: {
       [checklistId: string]: {
-        [itemId: string]: boolean;
+        [itemId: string]: ChecklistItemStatus;
       };
     };
   }>({});
@@ -27,23 +32,31 @@ export function useChecklist({ categories }: UseChecklistProps) {
   // クライアントサイドでのみLocalStorageから読み込む（ハイドレーション対応）
   useEffect(() => {
     const stored = loadFromStorage();
-    if (stored?.checklistStates) {
+    if (stored?.itemStates) {
       // useEffectの中でqueueMicrotaskを使用して次のマイクロタスクで実行
       queueMicrotask(() => {
-        setChecklistStates(stored.checklistStates || {});
+        setItemStates(stored.itemStates || {});
       });
     }
   }, []);
 
-  // チェック項目のトグル
-  const toggleItem = useCallback(
-    (categoryId: string, checklistId: string, itemId: string) => {
-      setChecklistStates((prev) => {
-        const currentState = prev[categoryId]?.[checklistId]?.[itemId] ?? false;
-        const newState = !currentState;
+  // アイテムの状態を変更
+  const updateItemStatus = useCallback(
+    (
+      categoryId: string,
+      checklistId: string,
+      itemId: string,
+      newStatus: ChecklistItemStatus
+    ) => {
+      setItemStates((prev) => {
+        const currentStatus =
+          prev[categoryId]?.[checklistId]?.[itemId] ?? "unchecked";
 
-        // チェックを外す場合、それ以降の項目もすべて外す
-        if (currentState && !newState) {
+        // チェックまたはOVRDを外す場合、それ以降の項目もすべてuncheckedに設定
+        if (
+          (currentStatus === "checked" || currentStatus === "overridden") &&
+          newStatus === "unchecked"
+        ) {
           const category = categories.find((c) => c.id === categoryId);
           const checklist = category?.checklists.find(
             (cl) => cl.id === checklistId
@@ -57,10 +70,10 @@ export function useChecklist({ categories }: UseChecklistProps) {
               ...prev[categoryId]?.[checklistId],
             };
 
-            // 現在の項目以降をすべてfalseに設定
+            // 現在の項目以降をすべてuncheckedに設定
             checklist.items.slice(itemIndex).forEach((item) => {
-              updatedChecklistState[item.id] = false;
-              setItemState(categoryId, checklistId, item.id, false);
+              updatedChecklistState[item.id] = "unchecked";
+              setItemStatus(categoryId, checklistId, item.id, "unchecked");
             });
 
             return {
@@ -74,7 +87,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
         }
 
         // LocalStorageに保存
-        setItemState(categoryId, checklistId, itemId, newState);
+        setItemStatus(categoryId, checklistId, itemId, newStatus);
 
         return {
           ...prev,
@@ -82,7 +95,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
             ...prev[categoryId],
             [checklistId]: {
               ...prev[categoryId]?.[checklistId],
-              [itemId]: newState,
+              [itemId]: newStatus,
             },
           },
         };
@@ -117,7 +130,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
 
       const total = checklist.items.length;
       const completed = checklist.items.filter(
-        (item) => checklistStates[categoryId]?.[checklistId]?.[item.id] === true
+        (item) => itemStates[categoryId]?.[checklistId]?.[item.id] === "checked"
       ).length;
 
       return {
@@ -126,7 +139,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
         percentage: total > 0 ? Math.round((completed / total) * 100) : 0,
       };
     },
-    [categories, checklistStates]
+    [categories, itemStates]
   );
 
   // 現在アクティブなチェックリストを取得
@@ -137,21 +150,21 @@ export function useChecklist({ categories }: UseChecklistProps) {
 
   // 現在アクティブなチェックリストのアイテムを取得（状態付き）
   const getCurrentItems = useCallback((): (ChecklistItem & {
-    checked: boolean;
+    status: ChecklistItemStatus;
   })[] => {
     const checklist = getCurrentChecklist();
     if (!checklist) return [];
 
     return checklist.items.map((item) => ({
       ...item,
-      checked:
-        checklistStates[activeCategory]?.[activeChecklist]?.[item.id] ?? false,
+      status:
+        itemStates[activeCategory]?.[activeChecklist]?.[item.id] ?? "unchecked",
     }));
-  }, [getCurrentChecklist, checklistStates, activeCategory, activeChecklist]);
+  }, [getCurrentChecklist, itemStates, activeCategory, activeChecklist]);
 
   // すべてをリセット
   const resetAll = useCallback(() => {
-    setChecklistStates({});
+    setItemStates({});
     // LocalStorageもクリア
     if (typeof window !== "undefined") {
       localStorage.removeItem("b747-checklist-state");
@@ -161,7 +174,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
   // 特定のチェックリストをリセット
   const resetChecklist = useCallback(
     (categoryId: string, checklistId: string) => {
-      setChecklistStates((prev) => ({
+      setItemStates((prev) => ({
         ...prev,
         [categoryId]: {
           ...prev[categoryId],
@@ -174,7 +187,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
 
   // NORMALメニューのすべてをリセット
   const resetNormal = useCallback(() => {
-    setChecklistStates((prev) => {
+    setItemStates((prev) => {
       const newStates = { ...prev };
       categories
         .filter((cat) => cat.menuType === "normal")
@@ -185,7 +198,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
       if (typeof window !== "undefined") {
         const stored = loadFromStorage();
         if (stored) {
-          stored.checklistStates = newStates;
+          stored.itemStates = newStates;
           localStorage.setItem("b747-checklist-state", JSON.stringify(stored));
         }
       }
@@ -195,7 +208,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
 
   // NON-NORMALメニューのすべてをリセット
   const resetNonNormal = useCallback(() => {
-    setChecklistStates((prev) => {
+    setItemStates((prev) => {
       const newStates = { ...prev };
       categories
         .filter((cat) => cat.menuType === "non-normal")
@@ -206,7 +219,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
       if (typeof window !== "undefined") {
         const stored = loadFromStorage();
         if (stored) {
-          stored.checklistStates = newStates;
+          stored.itemStates = newStates;
           localStorage.setItem("b747-checklist-state", JSON.stringify(stored));
         }
       }
@@ -219,12 +232,12 @@ export function useChecklist({ categories }: UseChecklistProps) {
     activeCategory,
     activeChecklist,
     categories,
-    checklistStates,
+    itemStates,
 
     // アクション
     setActiveCategory: handleCategoryChange,
     setActiveChecklist,
-    toggleItem,
+    updateItemStatus,
     resetAll,
     resetChecklist,
     resetNormal,

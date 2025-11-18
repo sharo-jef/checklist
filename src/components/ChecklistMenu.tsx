@@ -1,13 +1,17 @@
-import { ChecklistCategory, MenuType } from "@/types/checklist";
+import {
+  ChecklistCategory,
+  ChecklistItemStatus,
+  MenuType,
+} from "@/types/checklist";
 import { CheckIcon } from "./CheckIcon";
 
 interface ChecklistMenuProps {
   categories: ChecklistCategory[];
   onSelect: (categoryId: string) => void;
-  checklistStates: {
+  itemStates: {
     [categoryId: string]: {
       [checklistId: string]: {
-        [itemId: string]: boolean;
+        [itemId: string]: ChecklistItemStatus;
       };
     };
   };
@@ -17,17 +21,19 @@ interface ChecklistMenuProps {
 export function ChecklistMenu({
   categories,
   onSelect,
-  checklistStates,
+  itemStates,
   menuType,
 }: ChecklistMenuProps) {
   const isChecklistComplete = (category: ChecklistCategory): boolean => {
     const checklist = category.checklists[0];
     if (!checklist) return false;
 
-    const checklistState = checklistStates[category.id]?.[checklist.id];
+    const checklistState = itemStates[category.id]?.[checklist.id];
     if (!checklistState) return false;
 
-    return checklist.items.every((item) => checklistState[item.id] === true);
+    return checklist.items.every(
+      (item) => checklistState[item.id] === "checked"
+    );
   };
 
   return (
@@ -35,7 +41,7 @@ export function ChecklistMenu({
       {menuType && (
         <div className="p-3 pt-0">
           <div
-            className={`py-2 ${menuType === MenuType.NON_NORMAL ? "bg-green-600" : ""}`}
+            className={`py-2 ${menuType === MenuType.NON_NORMAL ? "bg-(--menu-green)" : ""}`}
           >
             <h1 className="font-mono text-[20px] text-white tracking-wide text-center">
               {menuType === MenuType.NORMAL ? "NORMAL MENU" : "NON-NORMAL MENU"}

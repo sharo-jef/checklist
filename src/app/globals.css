@@ -6,8 +6,9 @@
   --menu-bg: #09090c;
   --menu-inactive: #4a5568;
   --menu-active: #6b7c94;
+  --menu-green: #0fe913;
   --text-white: #ffffff;
-  --text-green: #0bce0e;
+  --text-green: #0efd12;
   --text-cyan: #0baacf;
   --highlight-magenta: #e165e0;
   --check-gray: #6b7c94;
@@ -68,4 +69,42 @@ button,
 a,
 [role="button"] {
   cursor: var(--custom-cursor) !important;
+}
+
+/* Green glow effect using @layer */
+@layer utilities {
+  .text-\(--text-green\) {
+    color: var(--text-green);
+    text-shadow:
+      0 0 3px rgba(14, 253, 18, 0.4),
+      0 0 6px rgba(14, 253, 18, 0.2);
+  }
+
+  .text-\(--text-green\)\/60 {
+    color: rgb(14 253 18 / 0.6);
+    text-shadow: 0 0 3px rgba(14, 253, 18, 0.3);
+  }
+
+  .text-\(--text-green\)\/80 {
+    color: rgb(14 253 18 / 0.8);
+    text-shadow: 0 0 3px rgba(14, 253, 18, 0.35);
+  }
+
+  .border-\(--menu-green\) {
+    border-color: var(--menu-green);
+  }
+
+  .bg-\(--menu-green\) {
+    background-color: var(--menu-green);
+  }
+
+  .bg-\(--menu-green\)\/30 {
+    background-color: rgb(15 233 19 / 0.3);
+  }
+}
+
+/* SVG green glow */
+[stroke="var(--text-green)"],
+[stroke="var(--menu-green)"] {
+  filter: drop-shadow(0 0 2px rgba(14, 253, 18, 0.5));
 }

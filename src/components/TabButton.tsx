@@ -13,8 +13,8 @@ export function TabButton({ title, active, onClick }: TabButtonProps) {
         border-b-2 whitespace-nowrap
         ${
           active
-            ? "text-green-400 border-green-400 bg-green-950/30"
-            : "text-green-600 border-transparent hover:text-green-500 hover:border-green-700"
+            ? "text-(--text-green) border-(--menu-green) bg-(--menu-green)/30"
+            : "text-(--text-green)/60 border-transparent hover:text-(--text-green)/80 hover:border-(--menu-green)/70"
         }
       `}
     >

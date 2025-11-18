@@ -1,7 +1,7 @@
-import { StoredData } from "@/types/checklist";
+import { StoredData, ChecklistItemStatus } from "@/types/checklist";
 
 const STORAGE_KEY = "b747-checklist-state";
-const STORAGE_VERSION = "1.0.0";
+const STORAGE_VERSION = "2.0.0";
 
 /**
  * LocalStorageからデータを読み込む
@@ -19,7 +19,46 @@ export function loadFromStorage(): StoredData | null {
 
     const data: StoredData = JSON.parse(stored);
 
-    // バージョンチェック
+    // バージョンチェック - 旧バージョンの場合は移行
+    if (data.version === "1.0.0") {
+      console.log("Migrating storage from v1.0.0 to v2.0.0");
+      const oldData = data as any;
+      const newItemStates: StoredData["itemStates"] = {};
+
+      // checklistStatesとoverriddenStatesを統合
+      for (const categoryId in oldData.checklistStates || {}) {
+        newItemStates[categoryId] = {};
+        for (const checklistId in oldData.checklistStates[categoryId] || {}) {
+          newItemStates[categoryId][checklistId] = {};
+          for (const itemId in oldData.checklistStates[categoryId][
+            checklistId
+          ] || {}) {
+            const isChecked =
+              oldData.checklistStates[categoryId][checklistId][itemId];
+            const isOverridden =
+              oldData.overriddenStates?.[categoryId]?.[checklistId]?.[itemId];
+
+            if (isOverridden) {
+              newItemStates[categoryId][checklistId][itemId] = "overridden";
+            } else if (isChecked) {
+              newItemStates[categoryId][checklistId][itemId] = "checked";
+            } else {
+              newItemStates[categoryId][checklistId][itemId] = "unchecked";
+            }
+          }
+        }
+      }
+
+      const migratedData: StoredData = {
+        version: STORAGE_VERSION,
+        lastUpdated: Date.now(),
+        itemStates: newItemStates,
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migratedData));
+      return migratedData;
+    }
+
     if (data.version !== STORAGE_VERSION) {
       console.warn("Storage version mismatch. Resetting data.");
       return null;
@@ -45,8 +84,7 @@ export function saveToStorage(data: Partial<StoredData>): boolean {
     const newData: StoredData = {
       version: STORAGE_VERSION,
       lastUpdated: Date.now(),
-      checklistStates:
-        data.checklistStates || currentData?.checklistStates || {},
+      itemStates: data.itemStates || currentData?.itemStates || {},
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
@@ -75,37 +113,37 @@ export function clearStorage(): boolean {
 }
 
 /**
- * 特定のアイテムの完了状態を取得
+ * 特定のアイテムの状態を取得
  */
-export function getItemState(
+export function getItemStatus(
   categoryId: string,
   checklistId: string,
   itemId: string
-): boolean {
+): ChecklistItemStatus {
   const data = loadFromStorage();
-  return data?.checklistStates?.[categoryId]?.[checklistId]?.[itemId] ?? false;
+  return data?.itemStates?.[categoryId]?.[checklistId]?.[itemId] ?? "unchecked";
 }
 
 /**
- * 特定のアイテムの完了状態を設定
+ * 特定のアイテムの状態を設定
  */
-export function setItemState(
+export function setItemStatus(
   categoryId: string,
   checklistId: string,
   itemId: string,
-  completed: boolean
+  status: ChecklistItemStatus
 ): boolean {
   const data = loadFromStorage();
-  const checklistStates = data?.checklistStates || {};
+  const itemStates = data?.itemStates || {};
 
-  if (!checklistStates[categoryId]) {
-    checklistStates[categoryId] = {};
+  if (!itemStates[categoryId]) {
+    itemStates[categoryId] = {};
   }
-  if (!checklistStates[categoryId][checklistId]) {
-    checklistStates[categoryId][checklistId] = {};
+  if (!itemStates[categoryId][checklistId]) {
+    itemStates[categoryId][checklistId] = {};
   }
 
-  checklistStates[categoryId][checklistId][itemId] = completed;
+  itemStates[categoryId][checklistId][itemId] = status;
 
-  return saveToStorage({ checklistStates });
+  return saveToStorage({ itemStates });
 }
