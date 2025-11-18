@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { CRTScreen } from "@/components/CRTScreen";
 import { TopMenu } from "@/components/TopMenu";
 import { ChecklistMenu } from "@/components/ChecklistMenu";
 import { ChecklistDisplay } from "@/components/ChecklistDisplay";
@@ -293,7 +292,7 @@ export default function Home() {
   };
 
   return (
-    <CRTScreen>
+    <div className="h-screen w-full bg-[#09090C] flex flex-col overflow-hidden">
       <TopMenu
         activeMenu={isInChecklist ? null : activeMenu}
         onMenuChange={handleMenuChange}
@@ -402,6 +401,6 @@ export default function Home() {
           hasNextChecklist={false}
         />
       )}
-    </CRTScreen>
+    </div>
   );
 }

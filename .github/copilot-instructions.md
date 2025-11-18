@@ -1,11 +1,11 @@
 # Vehicle Digital Checklist - GitHub Copilot Instructions
 
-このプロジェクトは、航空機のデジタルチェックリストシステムにインスパイアされた自家用車向けチェックリストアプリケーションです。Next.js 16（App Router）、React 19、TypeScript 5、Tailwind CSS 4を使用し、レトロなCRT風ディスプレイのデザインを実装しています。
+このプロジェクトは、航空機のデジタルチェックリストシステムにインスパイアされた自家用車向けチェックリストアプリケーションです。Next.js 16（App Router）、React 19、TypeScript 5、Tailwind CSS 4を使用しています。
 
 ## プロジェクト概要
 
 **プロジェクト名**: Vehicle Digital Checklist  
-**バージョン**: 0.0.16  
+**バージョン**: 0.0.18  
 **ライセンス**: MIT  
 **リポジトリ**: https://github.com/sharo-jef/checklist
 
@@ -20,7 +20,6 @@
 - **自動進行**: チェック完了時に次の未チェック項目へ自動移動
 - **リセット機能**: メニュー全体または個別チェックリストのリセット
 - **オーバーライド機能**: 必須項目をスキップする機能
-- **没入感のあるデザイン**: CRTディスプレイ風のスキャンライン、グロー効果、ビネット効果
 - **自動ドット表示**: チェック項目のフォーマットを自動整形（"Parking brake..........Set"）
 
 ## 技術スタック
@@ -58,10 +57,9 @@ checklist/
 │   ├── app/
 │   │   ├── page.tsx                # メインページ（Client Component）
 │   │   ├── layout.tsx              # ルートレイアウト
-│   │   ├── globals.css             # CRT効果のグローバルスタイル
+│   │   ├── globals.css             # グローバルスタイル
 │   │   └── favicon.ico
 │   ├── components/
-│   │   ├── CRTScreen.tsx           # CRT効果ラッパー
 │   │   ├── TopMenu.tsx             # 上部メニューバー
 │   │   ├── ChecklistMenu.tsx       # チェックリスト一覧メニュー
 │   │   ├── ChecklistDisplay.tsx    # チェックリスト表示
@@ -209,10 +207,12 @@ interface ChecklistCategory {
 2. **BEFORE START** (NORMAL)
    - Doors, Mirrors, Belts, Master switch の確認
 3. **BEFORE DEPARTURE** (NORMAL)
-   - Navigation, Master switch, Caution lights, Lights, Roof, Parking brake の確認
+   - Navigation, Master switch, Caution lights, Lights, Roof, Room lamp, Parking brake の確認
 4. **PARKING** (NORMAL)
    - Gears, Parking brake, Roof, Doors, Windows, Seat heaters, Master switch の確認
-5. **ACCIDENT** (NON-NORMAL)
+5. **SECURE** (NORMAL)
+   - ETC card, Room lamp, Doors の確認
+6. **ACCIDENT** (NON-NORMAL)
    - Call ambulance, Call police, Call dealer, Call insurer
 
 ### データ追加方法
@@ -244,27 +244,24 @@ interface ChecklistCategory {
 
 ## スタイリングとデザイン
 
-### CRT風エフェクト（`src/app/globals.css`）
+### カラーパレット（`src/app/globals.css`）
 
 #### 主要なカスタムプロパティ
 
 ```css
 :root {
-  --crt-text-primary: #00ff00; /* 明るい緑 */
-  --crt-text-secondary: #33ff33; /* 中程度の緑 */
-  --crt-text-dim: #006600; /* 暗い緑 */
-  --crt-screen-bg: #001a00; /* ディスプレイ背景 */
-  --crt-bezel-bg: #1a1a1a; /* ベゼル背景 */
+  --bg-display: #09090c; /* 背景色 */
+  --menu-bg: #09090c; /* メニュー背景 */
+  --menu-inactive: #4a5568; /* 非アクティブメニュー */
+  --menu-active: #6b7c94; /* アクティブメニュー */
+  --menu-green: #0fe913; /* メニュー緑 */
+  --text-white: #ffffff; /* 白テキスト */
+  --text-green: #0efd12; /* 緑テキスト */
+  --text-cyan: #1dc5eb; /* シアンテキスト */
+  --highlight-magenta: #e165e0; /* マゼンタハイライト */
+  --check-gray: #6b7c94; /* チェックグレー */
 }
 ```
-
-#### CRT効果の実装
-
-1. **スキャンライン**: `repeating-linear-gradient`による水平線
-2. **グロー効果**: `text-shadow`による緑色の発光
-3. **ビネット**: 画面周囲の暗い縁取り
-4. **画面反射**: 微細なノイズテクスチャ
-5. **カスタムスクロールバー**: 緑色のスタイリング
 
 ### Tailwind CSS設定
 
@@ -456,8 +453,7 @@ try {
 ### スタイルのカスタマイズ
 
 1. **カラーテーマ変更**: `src/app/globals.css`のCSS変数を編集
-2. **CRT効果の調整**: スキャンライン、グロー、ビネットのパラメータを変更
-3. **フォント変更**: `public/fonts/`にフォントを追加し、`globals.css`で指定
+2. **フォント変更**: `public/fonts/`にフォントを追加し、`globals.css`で指定
 
 ## パフォーマンス最適化
 
