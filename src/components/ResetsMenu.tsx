@@ -1,11 +1,11 @@
 import { MenuType } from "@/types/checklist";
-import { CheckIcon } from "./CheckIcon";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ResetsMenuProps {
   onResetNormal: () => void;
   onResetNonNormal: () => void;
   onResetAll: () => void;
+  onExitMenu: () => void;
 }
 
 type ResetButtonType = "normal" | "nonNormal" | "all" | null;
@@ -14,15 +14,33 @@ export function ResetsMenu({
   onResetNormal,
   onResetNonNormal,
   onResetAll,
+  onExitMenu,
 }: ResetsMenuProps) {
   const [clickedButton, setClickedButton] = useState<ResetButtonType>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // コンポーネントがアンマウントされる時にタイムアウトをクリア
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleReset = (type: ResetButtonType, callback: () => void) => {
+    // 既存のタイムアウトをクリア
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
     callback();
     setClickedButton(type);
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setClickedButton(null);
-    }, 3000);
+      onExitMenu();
+      timeoutRef.current = null;
+    }, 1000);
   };
 
   return (
@@ -38,37 +56,28 @@ export function ResetsMenu({
         <div className="space-y-2">
           <button
             onClick={() => handleReset("normal", onResetNormal)}
-            className={`w-full text-left px-4 py-1 bg-gray-700 border-2 border-transparent hover:border-white font-mono text-2xl flex items-center gap-2 ${
-              clickedButton === "normal" ? "text-(--text-green)" : "text-white"
+            className={`w-full text-left px-4 py-1 border-2 border-transparent hover:border-white font-mono text-2xl text-white ${
+              clickedButton === "normal" ? "bg-(--menu-green)" : "bg-gray-700"
             }`}
           >
-            <div className="w-4 h-4 shrink-0">
-              {clickedButton === "normal" && <CheckIcon />}
-            </div>
             RESET NORMAL
           </button>
           <button
             onClick={() => handleReset("nonNormal", onResetNonNormal)}
-            className={`w-full text-left px-4 py-1 bg-gray-700 border-2 border-transparent hover:border-white font-mono text-2xl flex items-center gap-2 ${
+            className={`w-full text-left px-4 py-1 border-2 border-transparent hover:border-white font-mono text-2xl text-white ${
               clickedButton === "nonNormal"
-                ? "text-(--text-green)"
-                : "text-white"
+                ? "bg-(--menu-green)"
+                : "bg-gray-700"
             }`}
           >
-            <div className="w-4 h-4 shrink-0">
-              {clickedButton === "nonNormal" && <CheckIcon />}
-            </div>
             RESET NON-NORMAL
           </button>
           <button
             onClick={() => handleReset("all", onResetAll)}
-            className={`w-full text-left px-4 py-1 bg-gray-700 border-2 border-transparent hover:border-white font-mono text-2xl flex items-center gap-2 ${
-              clickedButton === "all" ? "text-(--text-green)" : "text-white"
+            className={`w-full text-left px-4 py-1 border-2 border-transparent hover:border-white font-mono text-2xl text-white ${
+              clickedButton === "all" ? "bg-(--menu-green)" : "bg-gray-700"
             }`}
           >
-            <div className="w-4 h-4 shrink-0">
-              {clickedButton === "all" && <CheckIcon />}
-            </div>
             RESET ALL
           </button>
         </div>

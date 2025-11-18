@@ -10,11 +10,11 @@ import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
 import { MenuType } from "@/types/checklist";
 
-type ViewMode = "menu" | "checklist";
+type ViewMode = "default" | "menu" | "checklist";
 
 export default function Home() {
-  const [activeMenu, setActiveMenu] = useState<MenuType>(MenuType.NORMAL);
-  const [viewMode, setViewMode] = useState<ViewMode>("menu");
+  const [activeMenu, setActiveMenu] = useState<MenuType | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("default");
   const [activeItemIndex, setActiveItemIndex] = useState(0);
 
   const {
@@ -51,13 +51,61 @@ export default function Home() {
 
   const handleMenuChange = (menu: MenuType) => {
     setActiveMenu(menu);
-    if (menu === MenuType.NORMAL) {
-      setViewMode("menu");
-    } else if (menu === MenuType.NON_NORMAL) {
-      setViewMode("menu");
-    } else if (menu === MenuType.RESETS) {
-      setViewMode("menu");
+    setViewMode("menu");
+  };
+
+  const handleExitMenu = () => {
+    setActiveMenu(null);
+    setViewMode("default");
+  };
+
+  // 指定されたメニュータイプで次の未完了チェックリストを見つける
+  const getNextIncompleteChecklist = (menuType: MenuType): string | null => {
+    const categories = checklistData.filter((cat) => cat.menuType === menuType);
+
+    if (categories.length === 0) return null;
+
+    // 最初の未完了チェックリストを探す
+    for (const category of categories) {
+      const checklist = category.checklists[0];
+      if (!checklist) continue;
+
+      const checklistState = itemStates[category.id]?.[checklist.id];
+      if (!checklistState) {
+        // まだ何もチェックされていない場合、これが次のチェックリスト
+        return category.id;
+      }
+
+      const isComplete = checklist.items.every((item) => {
+        const status = checklistState[item.id];
+        return status === "checked" || status === "overridden";
+      });
+
+      if (!isComplete) {
+        return category.id;
+      }
     }
+
+    // すべて完了している場合は最後のチェックリストを返す
+    return categories[categories.length - 1].id;
+  };
+
+  const handleNormalButton = () => {
+    const categoryId = getNextIncompleteChecklist(MenuType.NORMAL);
+    if (!categoryId) return;
+    setActiveMenu(MenuType.NORMAL);
+    setActiveCategory(categoryId);
+    setViewMode("checklist");
+    setActiveItemIndex(getFirstUncheckedIndex(categoryId));
+  };
+
+  const handleNonNormalButton = () => {
+    const categoryId = getNextIncompleteChecklist(MenuType.NON_NORMAL);
+    if (!categoryId) return;
+    setActiveMenu(MenuType.NON_NORMAL);
+    setActiveCategory(categoryId);
+    setViewMode("checklist");
+    setActiveItemIndex(getFirstUncheckedIndex(categoryId));
   };
 
   const handleResetNormal = () => {
@@ -213,15 +261,44 @@ export default function Home() {
         activeMenu={isInChecklist ? null : activeMenu}
         onMenuChange={handleMenuChange}
       />
+      {viewMode === "default" && (
+        <div className="flex-1 bg-[#09090C] flex flex-col">
+          <div className="flex-1"></div>
+          <div className="flex justify-between gap-3 p-3">
+            <button
+              onClick={handleNormalButton}
+              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white"
+            >
+              NORMAL
+            </button>
+            <button
+              onClick={handleNonNormalButton}
+              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-yellow-400 whitespace-pre-line"
+            >
+              {"NON-\nNORMAL"}
+            </button>
+          </div>
+        </div>
+      )}
       {activeMenu === MenuType.NORMAL && viewMode === "menu" && (
-        <ChecklistMenu
-          categories={checklistData.filter(
-            (cat) => cat.menuType === MenuType.NORMAL
-          )}
-          onSelect={handleChecklistSelect}
-          itemStates={itemStates}
-          menuType={MenuType.NORMAL}
-        />
+        <>
+          <ChecklistMenu
+            categories={checklistData.filter(
+              (cat) => cat.menuType === MenuType.NORMAL
+            )}
+            onSelect={handleChecklistSelect}
+            itemStates={itemStates}
+            menuType={MenuType.NORMAL}
+          />
+          <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
+            <button
+              onClick={handleExitMenu}
+              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white whitespace-pre-line"
+            >
+              {"EXIT\nMENU"}
+            </button>
+          </div>
+        </>
       )}
       {activeMenu === MenuType.NORMAL && viewMode === "checklist" && (
         <ChecklistDisplay
@@ -237,22 +314,43 @@ export default function Home() {
           hasNextChecklist={hasNextChecklist()}
         />
       )}
-      {activeMenu === MenuType.RESETS && (
-        <ResetsMenu
-          onResetNormal={handleResetNormal}
-          onResetNonNormal={handleResetNonNormal}
-          onResetAll={handleResetAll}
-        />
+      {activeMenu === MenuType.RESETS && viewMode === "menu" && (
+        <>
+          <ResetsMenu
+            onResetNormal={handleResetNormal}
+            onResetNonNormal={handleResetNonNormal}
+            onResetAll={handleResetAll}
+            onExitMenu={handleExitMenu}
+          />
+          <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
+            <button
+              onClick={handleExitMenu}
+              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white whitespace-pre-line"
+            >
+              {"EXIT\nMENU"}
+            </button>
+          </div>
+        </>
       )}
       {activeMenu === MenuType.NON_NORMAL && viewMode === "menu" && (
-        <ChecklistMenu
-          categories={checklistData.filter(
-            (cat) => cat.menuType === MenuType.NON_NORMAL
-          )}
-          onSelect={handleChecklistSelect}
-          itemStates={itemStates}
-          menuType={MenuType.NON_NORMAL}
-        />
+        <>
+          <ChecklistMenu
+            categories={checklistData.filter(
+              (cat) => cat.menuType === MenuType.NON_NORMAL
+            )}
+            onSelect={handleChecklistSelect}
+            itemStates={itemStates}
+            menuType={MenuType.NON_NORMAL}
+          />
+          <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
+            <button
+              onClick={handleExitMenu}
+              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white whitespace-pre-line"
+            >
+              {"EXIT\nMENU"}
+            </button>
+          </div>
+        </>
       )}
       {activeMenu === MenuType.NON_NORMAL && viewMode === "checklist" && (
         <ChecklistDisplay

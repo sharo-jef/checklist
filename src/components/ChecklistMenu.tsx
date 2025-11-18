@@ -54,7 +54,7 @@ export function ChecklistMenu({
       {menuType && (
         <div className="p-3 pt-0">
           <div
-            className={`py-2 ${menuType === MenuType.NON_NORMAL ? "bg-(--menu-green)" : ""}`}
+            className={`py-2 ${/*menuType === MenuType.NON_NORMAL*/ false ? "bg-(--menu-green)" : ""}`}
           >
             <h1 className="font-mono text-[20px] text-white tracking-wide text-center">
               {menuType === MenuType.NORMAL ? "NORMAL MENU" : "NON-NORMAL MENU"}
