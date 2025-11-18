@@ -61,7 +61,7 @@ export function ChecklistDisplay({
   };
 
   return (
-    <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden">
+    <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden relative">
       <div className="px-4 pb-2 bg-[#09090C]">
         <h1 className="font-mono text-[20px] text-white tracking-wide text-center">
           ▶ {checklist?.name || "NO CHECKLIST"} ◀
@@ -90,48 +90,59 @@ export function ChecklistDisplay({
         )}
       </div>
 
-      <ChecklistStatusBanner
-        isComplete={allItemsChecked}
-        isOverridden={allItemsOverridden}
-      />
-
       {showControls && (
-        <div className="flex gap-3 bg-[#09090C] p-3">
-          <div className={`flex-1 ${!hasNextChecklist ? "invisible" : ""}`}>
-            {(canGoNext || allItemsOverridden) && (
-              <button
-                onClick={onNext}
-                className="w-full py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white flex items-center justify-center border-2 border-transparent hover:border-white"
-                style={{ height: "100%" }}
-              >
-                NORMAL
-              </button>
-            )}
+        <>
+          <div className="absolute bottom-[76px] left-0 right-0 pointer-events-none">
+            <ChecklistStatusBanner
+              isComplete={allItemsChecked}
+              isOverridden={allItemsOverridden}
+            />
           </div>
-          <button
-            onClick={handleItemOverride}
-            className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
-          >
-            ITEM
-            <br />
-            OVRD
-          </button>
-          <button
-            onClick={onChecklistOverride}
-            className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
-          >
-            CHKL
-            <br />
-            OVRD
-          </button>
-          <button
-            onClick={onChecklistReset}
-            className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
-          >
-            CHKL
-            <br />
-            RESET
-          </button>
+          <div className="flex gap-3 bg-[#09090C] p-3">
+            <div className={`flex-1 ${!hasNextChecklist ? "invisible" : ""}`}>
+              {(canGoNext || allItemsOverridden) && (
+                <button
+                  onClick={onNext}
+                  className="w-full py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white flex items-center justify-center border-2 border-transparent hover:border-white"
+                  style={{ height: "100%" }}
+                >
+                  NORMAL
+                </button>
+              )}
+            </div>
+            <button
+              onClick={handleItemOverride}
+              className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
+            >
+              ITEM
+              <br />
+              OVRD
+            </button>
+            <button
+              onClick={onChecklistOverride}
+              className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
+            >
+              CHKL
+              <br />
+              OVRD
+            </button>
+            <button
+              onClick={onChecklistReset}
+              className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
+            >
+              CHKL
+              <br />
+              RESET
+            </button>
+          </div>
+        </>
+      )}
+      {!showControls && (
+        <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+          <ChecklistStatusBanner
+            isComplete={allItemsChecked}
+            isOverridden={allItemsOverridden}
+          />
         </div>
       )}
     </div>
