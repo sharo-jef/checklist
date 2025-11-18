@@ -64,30 +64,17 @@ export function ChecklistDisplay({
       <div className="flex-1 overflow-y-auto">
         {items.length > 0 ? (
           <div>
-            {items.map((item, index) => {
-              // 前の項目がすべてチェック済みまたはオーバーライド済みかどうかを確認
-              const canToggle =
-                index === 0 ||
-                items
-                  .slice(0, index)
-                  .every(
-                    (prevItem) =>
-                      prevItem.status === "checked" ||
-                      prevItem.status === "overridden"
-                  );
-
-              return (
-                <ChecklistItem
-                  key={item.id}
-                  item={item.item}
-                  value={item.value}
-                  status={item.status}
-                  required={item.required}
-                  isActive={index === activeItemIndex}
-                  onToggle={() => canToggle && onToggleItem(item.id)}
-                />
-              );
-            })}
+            {items.map((item, index) => (
+              <ChecklistItem
+                key={item.id}
+                item={item.item}
+                value={item.value}
+                status={item.status}
+                required={item.required}
+                isActive={index === activeItemIndex}
+                onToggle={() => onToggleItem(item.id)}
+              />
+            ))}
           </div>
         ) : (
           <div className="py-12 text-center">

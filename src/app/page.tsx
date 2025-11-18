@@ -171,7 +171,7 @@ export default function Home() {
     const itemIndex = currentItems.findIndex((item) => item.id === itemId);
     const currentItem = currentItems[itemIndex];
 
-    // overriddenの項目の場合はoverriddenを外す（それ以降もuncheckedになる処理はupdateItemStatusで行われる）
+    // overriddenの項目の場合はoverriddenを外す
     if (currentItem.status === "overridden") {
       updateItemStatus(
         activeCategory,
@@ -179,7 +179,13 @@ export default function Home() {
         itemId,
         "unchecked"
       );
-      setActiveItemIndex(itemIndex);
+      // 最初の未チェック項目のインデックスを取得してアクティブにする
+      const firstUncheckedIndex = currentItems.findIndex(
+        (item, idx) =>
+          item.status === "unchecked" ||
+          (idx === itemIndex && item.status === "overridden")
+      );
+      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
       return;
     }
 
@@ -193,21 +199,16 @@ export default function Home() {
       newStatus
     );
 
-    // チェックを入れた場合
-    if (newStatus === "checked") {
-      // 最後の項目の場合、アクティブインデックスを-1にして枠を消す
-      if (itemIndex === currentItems.length - 1) {
-        setActiveItemIndex(-1);
-      }
-      // 最後でない場合、次の項目に移動
-      else if (activeItemIndex < currentItems.length - 1) {
-        setActiveItemIndex(activeItemIndex + 1);
-      }
-    }
-    // チェックを外した場合、その項目に留まる
-    else {
-      setActiveItemIndex(itemIndex);
-    }
+    // アクティブインデックスを最初の未チェック項目に更新
+    setTimeout(() => {
+      const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
+        if (idx === itemIndex) {
+          return newStatus === "unchecked";
+        }
+        return item.status === "unchecked";
+      });
+      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
+    }, 0);
   };
 
   const handleItemOverride = (itemId: string) => {
@@ -224,21 +225,16 @@ export default function Home() {
       newStatus
     );
 
-    // オーバーライドした場合、次の項目に移動
-    if (newStatus === "overridden") {
-      // 最後の項目の場合、アクティブインデックスを-1にして枠を消す
-      if (itemIndex === currentItems.length - 1) {
-        setActiveItemIndex(-1);
-      }
-      // 最後でない場合、次の項目に移動
-      else if (activeItemIndex < currentItems.length - 1) {
-        setActiveItemIndex(activeItemIndex + 1);
-      }
-    }
-    // オーバーライドを解除した場合、その項目に留まる
-    else {
-      setActiveItemIndex(itemIndex);
-    }
+    // アクティブインデックスを最初の未チェック項目に更新
+    setTimeout(() => {
+      const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
+        if (idx === itemIndex) {
+          return newStatus === "unchecked";
+        }
+        return item.status === "unchecked";
+      });
+      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
+    }, 0);
   };
 
   const handleChecklistOverride = () => {
