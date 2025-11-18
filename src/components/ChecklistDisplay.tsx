@@ -33,7 +33,7 @@ export function ChecklistDisplay({
   return (
     <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden">
       <div className="px-4 pb-2 bg-[#09090C]">
-        <h1 className="font-mono text-base text-white tracking-wide text-center">
+        <h1 className="font-mono text-[20px] text-white tracking-wide text-center">
           ▶ {checklist?.name || "NO CHECKLIST"} ◀
         </h1>
       </div>
