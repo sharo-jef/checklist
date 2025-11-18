@@ -310,7 +310,7 @@ export default function Home() {
           onChecklistOverride={handleChecklistOverride}
           onChecklistReset={handleChecklistReset}
           onNext={handleNext}
-          showNextButton={true}
+          showControls={true}
           hasNextChecklist={hasNextChecklist()}
         />
       )}
@@ -361,6 +361,8 @@ export default function Home() {
           onItemOverride={handleItemOverride}
           onChecklistOverride={handleChecklistOverride}
           onChecklistReset={handleChecklistReset}
+          showControls={true}
+          hasNextChecklist={false}
         />
       )}
     </CRTScreen>

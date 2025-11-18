@@ -17,7 +17,7 @@ interface ChecklistDisplayProps {
   onChecklistOverride?: () => void;
   onChecklistReset?: () => void;
   onNext?: () => void;
-  showNextButton?: boolean;
+  showControls?: boolean;
   hasNextChecklist?: boolean;
 }
 
@@ -30,7 +30,7 @@ export function ChecklistDisplay({
   onChecklistOverride,
   onChecklistReset,
   onNext,
-  showNextButton = false,
+  showControls = false,
   hasNextChecklist = false,
 }: ChecklistDisplayProps) {
   const allItemsChecked =
@@ -101,9 +101,9 @@ export function ChecklistDisplay({
         isOverridden={allItemsOverridden}
       />
 
-      {showNextButton && (
+      {showControls && (
         <div className="flex gap-3 bg-[#09090C] p-3">
-          <div className="flex-1">
+          <div className={`flex-1 ${!hasNextChecklist ? "invisible" : ""}`}>
             {(canGoNext || allItemsOverridden) && (
               <button
                 onClick={onNext}
