@@ -1,4 +1,3 @@
-import { MenuType } from "@/types/checklist";
 import { useState, useEffect, useRef } from "react";
 
 interface ResetsMenuProps {
