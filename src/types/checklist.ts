@@ -8,6 +8,7 @@
 export enum MenuType {
   NORMAL = "normal",
   NON_NORMAL = "non-normal",
+  RESETS = "resets",
 }
 
 /**

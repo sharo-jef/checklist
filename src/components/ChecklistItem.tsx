@@ -39,11 +39,11 @@ export function ChecklistItem({
         <div
           className={`flex-1 font-mono text-[20px] tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${checked ? "text-(--text-green)" : "text-white"}`}
         >
-          <span className="shrink-0 font-bold">{item}</span>
+          <span className="shrink-0">{item}</span>
           <span className="flex-1 min-w-0 overflow-hidden whitespace-nowrap">
             {". ".repeat(400)}
           </span>
-          <span className="shrink-0 font-bold">{value}</span>
+          <span className="shrink-0">{value}</span>
         </div>
       </div>
     </div>

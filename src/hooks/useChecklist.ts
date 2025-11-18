@@ -172,6 +172,48 @@ export function useChecklist({ categories }: UseChecklistProps) {
     []
   );
 
+  // NORMALメニューのすべてをリセット
+  const resetNormal = useCallback(() => {
+    setChecklistStates((prev) => {
+      const newStates = { ...prev };
+      categories
+        .filter((cat) => cat.menuType === "normal")
+        .forEach((cat) => {
+          delete newStates[cat.id];
+        });
+      // LocalStorageも更新
+      if (typeof window !== "undefined") {
+        const stored = loadFromStorage();
+        if (stored) {
+          stored.checklistStates = newStates;
+          localStorage.setItem("b747-checklist-state", JSON.stringify(stored));
+        }
+      }
+      return newStates;
+    });
+  }, [categories]);
+
+  // NON-NORMALメニューのすべてをリセット
+  const resetNonNormal = useCallback(() => {
+    setChecklistStates((prev) => {
+      const newStates = { ...prev };
+      categories
+        .filter((cat) => cat.menuType === "non-normal")
+        .forEach((cat) => {
+          delete newStates[cat.id];
+        });
+      // LocalStorageも更新
+      if (typeof window !== "undefined") {
+        const stored = loadFromStorage();
+        if (stored) {
+          stored.checklistStates = newStates;
+          localStorage.setItem("b747-checklist-state", JSON.stringify(stored));
+        }
+      }
+      return newStates;
+    });
+  }, [categories]);
+
   return {
     // 状態
     activeCategory,
@@ -185,6 +227,8 @@ export function useChecklist({ categories }: UseChecklistProps) {
     toggleItem,
     resetAll,
     resetChecklist,
+    resetNormal,
+    resetNonNormal,
 
     // 計算値
     getProgress,

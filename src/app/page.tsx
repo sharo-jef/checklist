@@ -5,6 +5,7 @@ import { CRTScreen } from "@/components/CRTScreen";
 import { TopMenu } from "@/components/TopMenu";
 import { ChecklistMenu } from "@/components/ChecklistMenu";
 import { ChecklistDisplay } from "@/components/ChecklistDisplay";
+import { ResetsMenu } from "@/components/ResetsMenu";
 import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
 import { MenuType } from "@/types/checklist";
@@ -22,8 +23,9 @@ export default function Home() {
     toggleItem,
     getCurrentChecklist,
     getCurrentItems,
-    resetChecklist,
     resetAll,
+    resetNormal,
+    resetNonNormal,
     checklistStates,
   } = useChecklist({ categories: checklistData });
 
@@ -49,19 +51,24 @@ export default function Home() {
       setViewMode("menu");
     } else if (menu === MenuType.NON_NORMAL) {
       setViewMode("menu");
+    } else if (menu === MenuType.RESETS) {
+      setViewMode("menu");
     }
   };
 
-  const handleReset = () => {
-    if (viewMode === "menu") {
-      // メニュー画面では全てリセット
-      resetAll();
-      setActiveItemIndex(0);
-    } else if (currentChecklist) {
-      // チェックリスト画面では現在のチェックリストのみリセット
-      resetChecklist(activeCategory, currentChecklist.id);
-      setActiveItemIndex(0);
-    }
+  const handleResetNormal = () => {
+    resetNormal();
+    setActiveItemIndex(0);
+  };
+
+  const handleResetNonNormal = () => {
+    resetNonNormal();
+    setActiveItemIndex(0);
+  };
+
+  const handleResetAll = () => {
+    resetAll();
+    setActiveItemIndex(0);
   };
 
   const handleChecklistSelect = (categoryId: string) => {
@@ -134,7 +141,6 @@ export default function Home() {
       <TopMenu
         activeMenu={isInChecklist ? null : activeMenu}
         onMenuChange={handleMenuChange}
-        onReset={handleReset}
       />
       {activeMenu === MenuType.NORMAL && viewMode === "menu" && (
         <ChecklistMenu
@@ -154,6 +160,13 @@ export default function Home() {
           onNext={handleNext}
           showNextButton={true}
           hasNextChecklist={hasNextChecklist()}
+        />
+      )}
+      {activeMenu === MenuType.RESETS && (
+        <ResetsMenu
+          onResetNormal={handleResetNormal}
+          onResetNonNormal={handleResetNonNormal}
+          onResetAll={handleResetAll}
         />
       )}
       {activeMenu === MenuType.NON_NORMAL && viewMode === "menu" && (

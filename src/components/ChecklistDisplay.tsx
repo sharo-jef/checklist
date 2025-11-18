@@ -72,7 +72,7 @@ export function ChecklistDisplay({
           <button
             onClick={onNext}
             disabled={!canGoNext}
-            className={`flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none ${
+            className={`flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none ${
               canGoNext
                 ? "bg-[#6b7c94] text-white cursor-pointer"
                 : "bg-[#4a5568] text-gray-500 cursor-not-allowed"
@@ -80,17 +80,17 @@ export function ChecklistDisplay({
           >
             NORMAL
           </button>
-          <button className="flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none bg-[#4a5568] text-white">
+          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
             ITEM
             <br />
             OVRD
           </button>
-          <button className="flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none bg-[#4a5568] text-white">
+          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
             CHKL
             <br />
             OVRD
           </button>
-          <button className="flex-1 py-1 text-center font-mono text-xl font-bold tracking-wide leading-none bg-[#4a5568] text-white">
+          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
             CHKL
             <br />
             RESET

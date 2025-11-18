@@ -38,7 +38,7 @@ export function ChecklistMenu({
               <button
                 key={category.id}
                 onClick={() => onSelect(category.id)}
-                className={`w-full text-left px-4 py-1 bg-gray-700 hover:bg-gray-600 font-mono text-2xl font-bold flex items-center gap-2 ${
+                className={`w-full text-left px-4 py-1 bg-gray-700 hover:bg-gray-600 font-mono text-2xl flex items-center gap-2 ${
                   isComplete ? "text-(--text-green)" : "text-white"
                 }`}
               >
