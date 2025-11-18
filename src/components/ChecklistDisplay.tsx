@@ -34,7 +34,10 @@ export function ChecklistDisplay({
   hasNextChecklist = false,
 }: ChecklistDisplayProps) {
   const allItemsChecked =
-    items.length > 0 && items.every((item) => item.status === "checked");
+    items.length > 0 &&
+    items.every(
+      (item) => item.status === "checked" || item.status === "overridden"
+    );
   const allItemsOverridden =
     items.length > 0 && items.every((item) => item.status === "overridden");
   const canGoNext = allItemsChecked && hasNextChecklist;
@@ -101,7 +104,7 @@ export function ChecklistDisplay({
       {showNextButton && (
         <div className="flex gap-3 bg-[#09090C] p-3">
           <div className="flex-1">
-            {canGoNext && (
+            {(canGoNext || allItemsOverridden) && (
               <button
                 onClick={onNext}
                 className="w-full py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white flex items-center justify-center border-2 border-transparent hover:border-white"

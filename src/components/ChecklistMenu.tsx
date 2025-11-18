@@ -31,8 +31,21 @@ export function ChecklistMenu({
     const checklistState = itemStates[category.id]?.[checklist.id];
     if (!checklistState) return false;
 
+    return checklist.items.every((item) => {
+      const status = checklistState[item.id];
+      return status === "checked" || status === "overridden";
+    });
+  };
+
+  const isChecklistOverridden = (category: ChecklistCategory): boolean => {
+    const checklist = category.checklists[0];
+    if (!checklist) return false;
+
+    const checklistState = itemStates[category.id]?.[checklist.id];
+    if (!checklistState) return false;
+
     return checklist.items.every(
-      (item) => checklistState[item.id] === "checked"
+      (item) => checklistState[item.id] === "overridden"
     );
   };
 
@@ -53,16 +66,21 @@ export function ChecklistMenu({
         <div className="space-y-2">
           {categories.map((category) => {
             const isComplete = isChecklistComplete(category);
+            const isOverridden = isChecklistOverridden(category);
             return (
               <button
                 key={category.id}
                 onClick={() => onSelect(category.id)}
                 className={`w-full text-left px-4 py-1 bg-gray-700 border-2 border-transparent hover:border-white font-mono text-2xl flex items-center gap-2 ${
-                  isComplete ? "text-(--text-green)" : "text-white"
+                  isOverridden
+                    ? "text-cyan-400"
+                    : isComplete
+                      ? "text-(--text-green)"
+                      : "text-white"
                 }`}
               >
                 <div className="w-4 h-4 shrink-0">
-                  {isComplete && <CheckIcon />}
+                  {isComplete && !isOverridden && <CheckIcon />}
                 </div>
                 {category.title}
               </button>

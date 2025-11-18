@@ -129,9 +129,10 @@ export function useChecklist({ categories }: UseChecklistProps) {
       }
 
       const total = checklist.items.length;
-      const completed = checklist.items.filter(
-        (item) => itemStates[categoryId]?.[checklistId]?.[item.id] === "checked"
-      ).length;
+      const completed = checklist.items.filter((item) => {
+        const status = itemStates[categoryId]?.[checklistId]?.[item.id];
+        return status === "checked" || status === "overridden";
+      }).length;
 
       return {
         completed,
