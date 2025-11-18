@@ -3,7 +3,7 @@ import { ChecklistItemStatus } from "@/types/checklist";
 /**
  * User actions that trigger state transitions.
  */
-type Action = "toggle" | "override";
+export type Action = "toggle" | "override";
 
 /**
  * Complete mapping of (status, action) → next status.
