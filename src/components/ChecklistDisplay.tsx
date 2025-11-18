@@ -73,24 +73,24 @@ export function ChecklistDisplay({
             {canGoNext && (
               <button
                 onClick={onNext}
-                className="w-full py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white flex items-center justify-center"
+                className="w-full py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white flex items-center justify-center border-2 border-transparent hover:border-white"
                 style={{ height: "100%" }}
               >
                 NORMAL
               </button>
             )}
           </div>
-          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
+          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white">
             ITEM
             <br />
             OVRD
           </button>
-          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
+          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white">
             CHKL
             <br />
             OVRD
           </button>
-          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white">
+          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white">
             CHKL
             <br />
             RESET

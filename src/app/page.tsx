@@ -149,6 +149,7 @@ export default function Home() {
           )}
           onSelect={handleChecklistSelect}
           checklistStates={checklistStates}
+          menuType={MenuType.NORMAL}
         />
       )}
       {activeMenu === MenuType.NORMAL && viewMode === "checklist" && (
@@ -176,6 +177,7 @@ export default function Home() {
           )}
           onSelect={handleChecklistSelect}
           checklistStates={checklistStates}
+          menuType={MenuType.NON_NORMAL}
         />
       )}
       {activeMenu === MenuType.NON_NORMAL && viewMode === "checklist" && (
