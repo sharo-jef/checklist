@@ -118,6 +118,13 @@ export const checklistData: ChecklistCategory[] = [
           },
           {
             id: "bd-5",
+            item: "Roof",
+            value: "AS REQUIRED",
+            completed: false,
+            required: true,
+          },
+          {
+            id: "bd-6",
             item: "Parking brake",
             value: "Release",
             completed: false,
