@@ -1,498 +1,154 @@
-# Vehicle Digital Checklist - GitHub Copilot Instructions
+# Copilot Instructions for Vehicle Digital Checklist
 
-このプロジェクトは、航空機のデジタルチェックリストシステムにインスパイアされた自家用車向けチェックリストアプリケーションです。Next.js 16（App Router）、React 19、TypeScript 5、Tailwind CSS 4を使用しています。
+## Project Overview
 
-## プロジェクト概要
+This is a Next.js 16 static site (static export) inspired by Boeing 747-8i digital checklist systems, adapted for personal vehicle use. The app manages pre-drive, during-drive, and parking checklists with professional aviation-style workflows.
 
-**プロジェクト名**: Vehicle Digital Checklist  
-**バージョン**: 0.0.18  
-**ライセンス**: MIT  
-**リポジトリ**: https://github.com/sharo-jef/checklist
+**Key characteristics:**
 
-### 目的
+- Static export deployed to GitHub Pages at `/checklist` base path
+- Client-only state management (no server components for data)
+- LocalStorage persistence with version migration support
+- React 19 with experimental React Compiler enabled
+- Japanese primary audience (UI in English, docs in Japanese)
 
-自家用車の運転前・運転中・駐車時の安全確認をプロフェッショナルなチェックリストシステムで管理し、確認漏れを防止します。また、事故などの非正常時に必要な手続きもチェックリストとして提供します。
+## Architecture & Data Flow
 
-### 主な機能
+### State Management Pattern
 
-- **メニューベースのナビゲーション**: NORMAL（通常時）/ NON-NORMAL（非正常時）メニューでチェックリストを整理
-- **自動保存**: LocalStorageによるチェック状態の永続化
-- **自動進行**: チェック完了時に次の未チェック項目へ自動移動
-- **リセット機能**: メニュー全体または個別チェックリストのリセット
-- **オーバーライド機能**: 必須項目をスキップする機能
-- **自動ドット表示**: チェック項目のフォーマットを自動整形（"Parking brake..........Set"）
+The app uses **unidirectional data flow** with hooks:
 
-## 技術スタック
+1. **Single source of truth**: `src/data/checklists.ts` contains immutable checklist definitions
+2. **Runtime state**: `useChecklist` hook manages item status via LocalStorage-backed state
+3. **Component hierarchy**: `page.tsx` → `ChecklistDisplay` → `ChecklistItem` with prop drilling
 
-### フレームワーク・ライブラリ
+**Critical**: Never modify `checklists.ts` data directly at runtime. Item completion state lives in `itemStates` (categoryId → checklistId → itemId → status), separate from the definition data.
 
-- **Next.js 16** (App Router)
-  - Static Export設定（`output: "export"`）
-  - basePath: `/checklist`
-  - React Compiler有効化
-- **React 19** (Server ComponentsとClient Components混在)
-- **TypeScript 5**
-- **Tailwind CSS 4** (@tailwindcss/postcss)
+### Checklist Item Status Model
 
-### 開発ツール
+Items have 4 states (see `types/checklist.ts`):
 
-- **ESLint 9** (Next.js設定 + Prettier統合)
-- **Prettier 3.6.2**
-- **React Compiler** (babel-plugin-react-compiler)
+- `unchecked`: Default state
+- `checked`: User completed the item
+- `overridden`: Item marked complete without checking (cyan color)
+- `checked-overridden`: Both checked AND overridden (cyan color)
 
-### 状態管理
+**Override behavior**: Allows pilots to skip items in emergency/non-standard situations, mirroring real aviation checklists. Overridden items display in cyan (`--text-cyan`) vs. green (`--text-green`) for normal checks.
 
-- React Hooks（useState, useCallback, useEffect）
-- LocalStorage API（クライアントサイドのみ）
+### LocalStorage Schema & Migration
 
-## プロジェクト構造
+Storage key: `checklist-state`
+Current version: `2.0.0`
 
-```
-checklist/
-├── .github/
-│   └── copilot-instructions.md    # このファイル
-├── public/
-│   └── fonts/                      # カスタムフォント
-├── src/
-│   ├── app/
-│   │   ├── page.tsx                # メインページ（Client Component）
-│   │   ├── layout.tsx              # ルートレイアウト
-│   │   ├── globals.css             # グローバルスタイル
-│   │   └── favicon.ico
-│   ├── components/
-│   │   ├── TopMenu.tsx             # 上部メニューバー
-│   │   ├── ChecklistMenu.tsx       # チェックリスト一覧メニュー
-│   │   ├── ChecklistDisplay.tsx    # チェックリスト表示
-│   │   ├── ChecklistItem.tsx       # チェック項目
-│   │   ├── ChecklistStatusBanner.tsx # ステータスバナー
-│   │   ├── CheckIcon.tsx           # チェックアイコン
-│   │   ├── TabNavigation.tsx       # タブナビゲーション
-│   │   ├── TabButton.tsx           # タブボタン
-│   │   └── ResetsMenu.tsx          # リセットメニュー
-│   ├── hooks/
-│   │   ├── useChecklist.ts         # チェックリスト状態管理フック
-│   │   └── useLocalStorage.ts      # LocalStorageフック
-│   ├── types/
-│   │   └── checklist.ts            # TypeScript型定義
-│   ├── data/
-│   │   └── checklists.ts           # チェックリストデータ
-│   ├── utils/
-│   │   └── storage.ts              # LocalStorage操作ユーティリティ
-│   └── global.d.ts                 # グローバル型定義
-├── eslint.config.mjs
-├── next.config.ts
-├── next-env.d.ts
-├── package.json
-├── postcss.config.mjs
-├── tsconfig.json
-├── LICENSE
-└── README.md
+The app includes migration logic in `utils/storage.ts` from v1.0.0 (separate `checklistStates` + `overriddenStates`) to v2.0.0 (unified `itemStates`). When adding features, maintain migration compatibility or increment version.
+
+## Development Workflows
+
+### Running the App
+
+```bash
+npm run dev       # Development server at localhost:3000/checklist
+npm run build     # Static export to out/ directory
+npm run lint      # ESLint check
+npm run format    # Prettier formatting
 ```
 
-## アーキテクチャとデザインパターン
+**Important**: Because of `basePath: "/checklist"` in `next.config.ts`, always access dev server at `http://localhost:3000/checklist`, not root.
 
-### コンポーネント設計
+### Adding New Checklists
 
-#### Client Components（"use client"）
+1. Define in `src/data/checklists.ts` following the `ChecklistCategory` type
+2. Set `menuType` to `MenuType.NORMAL` or `MenuType.NON_NORMAL`
+3. Each item needs: `id` (unique), `item`, `value`, `completed: false`, `required: true/false`
+4. The `required` field controls the gray background indicator (false = auto-check eligible)
 
-すべてのインタラクティブなコンポーネントはClient Componentです：
-
-- `page.tsx`: メインアプリケーションロジック
-- すべての`components/`配下のコンポーネント
-- `useChecklist`フックを使用するコンポーネント
-
-#### ハイドレーション対策
-
-LocalStorageの読み込みは`useEffect`内で行い、初期状態はサーバーとクライアントで一致させています：
+Example pattern from existing code:
 
 ```typescript
-const [itemStates, setItemStates] = useState({});
+{
+  id: "new-category",
+  title: "NEW CATEGORY",
+  menuType: MenuType.NORMAL,
+  checklists: [{
+    id: "new-checklist",
+    name: "NEW CHECKLIST",
+    items: [
+      { id: "nc-1", item: "Item name", value: "EXPECTED STATE", completed: false, required: true }
+    ]
+  }]
+}
+```
+
+## UI/UX Patterns
+
+### Aviation-Inspired Design
+
+- **Monospaced font**: Barlow Condensed for all UI (mimics cockpit displays)
+- **Color coding**:
+  - White: Default/unchecked items
+  - Green (`--text-green`): Successfully checked items
+  - Cyan (`--text-cyan`): Overridden items
+  - Yellow: NON-NORMAL menu button text
+  - Magenta (`--highlight-magenta`): Active item border
+
+### Component Conventions
+
+- **ChecklistItem dotted line**: Uses `". ".repeat(400)` for the separator line between item and value (aviation checklist aesthetic)
+- **Active item tracking**: The `activeItemIndex` always points to the first unchecked item, automatically advancing as items are checked
+- **View mode state machine**: `default` → `menu` → `checklist` transitions managed in `page.tsx`
+
+### Styling Approach
+
+Uses Tailwind CSS v4 with custom CSS variables defined in `globals.css`. Prefer inline Tailwind classes over separate CSS modules. Note the custom color syntax: `text-(--text-green)` for CSS var references.
+
+## TypeScript & Type Safety
+
+- **Strict mode enabled**: All components must be properly typed
+- **Path aliases**: Use `@/` for `src/` imports (configured in `tsconfig.json`)
+- **No client-side rendering**: Mark data-fetching components with `"use client"` (already done in `page.tsx`)
+- **Enums for constants**: Use `MenuType` enum instead of string literals
+
+## Hydration Handling
+
+**Critical pattern**: The app carefully manages SSR/client hydration:
+
+```typescript
+// In useChecklist.ts - avoid hydration mismatch
+const [itemStates, setItemStates] = useState({}); // Start with empty object
 
 useEffect(() => {
   const stored = loadFromStorage();
   if (stored?.itemStates) {
-    queueMicrotask(() => {
-      setItemStates(stored.itemStates || {});
-    });
+    queueMicrotask(() => setItemStates(stored.itemStates)); // Defer to next microtask
   }
 }, []);
 ```
 
-### 状態管理
+Always ensure server-rendered output matches initial client render before hydrating with LocalStorage data.
 
-#### useChecklist フック
+## Testing & Debugging
 
-チェックリスト全体の状態を管理する中心的なフックです：
+No automated tests currently. Manual testing workflow:
 
-**主な状態**:
+1. Test both NORMAL and NON-NORMAL flows
+2. Verify LocalStorage persistence across page reloads
+3. Check override functionality (ITEM OVRD, CHKL OVRD buttons)
+4. Test RESETS menu (reset all, reset normal, reset non-normal)
+5. Validate `basePath` works in production build (`npm run build` → check `out/` directory)
 
-- `activeCategory`: 現在選択中のカテゴリID
-- `activeChecklist`: 現在選択中のチェックリストID
-- `itemStates`: 各チェック項目の状態（unchecked/checked/overridden）
+## Common Pitfalls
 
-**主なメソッド**:
+- **Don't use `&&` in PowerShell commands**: Use `;` to chain commands in `package.json` scripts
+- **Static export limitations**: No ISR, no server-side APIs. Everything must work client-side
+- **Mobile viewport**: `viewport.userScalable: false` is intentional for full-screen checklist UX
+- **Next button logic**: Only appears when all items are checked AND there's a next checklist in the NORMAL sequence
 
-- `updateItemStatus()`: 項目の状態を変更
-- `resetAll()`: すべてのチェックをリセット
-- `resetNormal()`: NORMALメニューのみリセット
-- `resetNonNormal()`: NON-NORMALメニューのみリセット
-- `resetChecklist()`: 特定のチェックリストをリセット
-- `overrideChecklist()`: チェックリスト全体をオーバーライド
-- `getProgress()`: 進捗情報を計算
-- `getCurrentChecklist()`: 現在のチェックリストを取得
-- `getCurrentItems()`: 現在の項目を状態付きで取得
+## External Dependencies
 
-#### LocalStorage永続化
+Minimal dependency footprint:
 
-**キー**: `b747-checklist-state`
+- `next` 16.0.3 (with React 19)
+- `tailwindcss` 4.x
+- `babel-plugin-react-compiler` for React Compiler optimization
 
-**データ構造**:
-
-```typescript
-interface StoredData {
-  version: string;
-  lastUpdated: number;
-  itemStates: {
-    [categoryId: string]: {
-      [checklistId: string]: {
-        [itemId: string]: ChecklistItemStatus;
-      };
-    };
-  };
-}
-```
-
-### 型システム
-
-#### 主要な型定義（`src/types/checklist.ts`）
-
-```typescript
-enum MenuType {
-  NORMAL = "normal",
-  NON_NORMAL = "non-normal",
-  RESETS = "resets",
-}
-
-type ChecklistItemStatus = "unchecked" | "checked" | "overridden";
-
-interface ChecklistItem {
-  id: string;
-  item: string; // 項目名（左側）
-  value: string; // ステータス/値（右側）
-  completed: boolean; // 後方互換性
-  required?: boolean; // 必須項目フラグ
-  notes?: string; // 補足メモ
-}
-
-interface Checklist {
-  id: string;
-  name: string;
-  items: ChecklistItem[];
-}
-
-interface ChecklistCategory {
-  id: string;
-  title: string;
-  checklists: Checklist[];
-  menuType: MenuType;
-}
-```
-
-## チェックリストデータ（`src/data/checklists.ts`）
-
-現在のチェックリストカテゴリ：
-
-1. **PREDRIVE** (NORMAL)
-   - Parking brake, Gears, Master switch の確認
-2. **BEFORE START** (NORMAL)
-   - Doors, Mirrors, Belts, Master switch の確認
-3. **BEFORE DEPARTURE** (NORMAL)
-   - Navigation, Master switch, Caution lights, Lights, Roof, Room lamp, Parking brake の確認
-4. **PARKING** (NORMAL)
-   - Gears, Parking brake, Roof, Doors, Windows, Seat heaters, Master switch の確認
-5. **SECURE** (NORMAL)
-   - ETC card, Room lamp, Doors の確認
-6. **ACCIDENT** (NON-NORMAL)
-   - Call ambulance, Call police, Call dealer, Call insurer
-
-### データ追加方法
-
-```typescript
-{
-  id: 'unique-id',
-  title: 'CATEGORY NAME',
-  menuType: MenuType.NORMAL, // または MenuType.NON_NORMAL
-  checklists: [
-    {
-      id: 'checklist-id',
-      name: 'CHECKLIST NAME',
-      items: [
-        {
-          id: 'item-1',
-          item: 'Item name',      // 左側の項目名
-          value: 'Expected value', // 右側の値
-          completed: false,
-          required: true
-        }
-      ]
-    }
-  ]
-}
-```
-
-**自動ドット表示**: `item`と`value`を分けて記述すると、表示時に自動的にドット（`.`）で埋められます。
-
-## スタイリングとデザイン
-
-### カラーパレット（`src/app/globals.css`）
-
-#### 主要なカスタムプロパティ
-
-```css
-:root {
-  --bg-display: #09090c; /* 背景色 */
-  --menu-bg: #09090c; /* メニュー背景 */
-  --menu-inactive: #4a5568; /* 非アクティブメニュー */
-  --menu-active: #6b7c94; /* アクティブメニュー */
-  --menu-green: #0fe913; /* メニュー緑 */
-  --text-white: #ffffff; /* 白テキスト */
-  --text-green: #0efd12; /* 緑テキスト */
-  --text-cyan: #1dc5eb; /* シアンテキスト */
-  --highlight-magenta: #e165e0; /* マゼンタハイライト */
-  --check-gray: #6b7c94; /* チェックグレー */
-}
-```
-
-### Tailwind CSS設定
-
-Tailwind CSS 4（`@tailwindcss/postcss`）を使用しています。カスタムスタイルは`globals.css`で定義されたCSS変数とTailwindのユーティリティクラスを組み合わせて実装されています。
-
-## ビルドと配信
-
-### Next.js設定（`next.config.ts`）
-
-```typescript
-const nextConfig: NextConfig = {
-  output: "export", // 静的エクスポート
-  basePath: "/checklist", // GitHub Pagesなどのサブパス対応
-  images: {
-    unoptimized: true, // 静的エクスポート用
-  },
-  reactCompiler: true, // React Compiler有効化
-};
-```
-
-### スクリプト
-
-```bash
-npm run dev      # 開発サーバー起動（localhost:3000）
-npm run build    # プロダクションビルド（静的エクスポート）
-npm run start    # プロダクションサーバー起動
-npm run lint     # ESLint実行
-npm run format   # Prettier実行
-```
-
-## 開発ガイドライン
-
-### コーディング規約
-
-1. **TypeScript**: すべてのファイルで厳密な型定義を使用
-2. **命名規則**:
-   - コンポーネント: PascalCase
-   - フック: `use` プレフィックス + camelCase
-   - 型: PascalCase
-   - 定数: SCREAMING_SNAKE_CASE
-3. **ファイル構成**: 機能ごとにディレクトリを分割（components, hooks, types, utils）
-4. **import順序**: React → Next.js → サードパーティ → 内部モジュール
-
-### コンポーネント作成ガイド
-
-#### 基本的なコンポーネント構造
-
-```typescript
-"use client"; // 必要に応じて
-
-import { useState } from "react";
-
-interface ComponentProps {
-  // propsの型定義
-}
-
-export function ComponentName({ prop1, prop2 }: ComponentProps) {
-  // ロジック
-
-  return (
-    <div className="...">
-      {/* JSX */}
-    </div>
-  );
-}
-```
-
-### State更新のベストプラクティス
-
-```typescript
-// ✅ Good: 関数形式のstate更新
-setItemStates((prev) => ({
-  ...prev,
-  [key]: newValue,
-}));
-
-// ❌ Bad: 直接的なstate更新
-setItemStates({ ...itemStates, [key]: newValue });
-```
-
-### LocalStorage操作
-
-すべてのLocalStorage操作は`src/utils/storage.ts`を経由して行います：
-
-```typescript
-import { loadFromStorage, setItemStatus } from "@/utils/storage";
-
-// 読み込み
-const stored = loadFromStorage();
-
-// 保存
-setItemStatus(categoryId, checklistId, itemId, status);
-```
-
-## UI/UXの仕様
-
-### ユーザーフロー
-
-1. **初期画面**: NORMAL / NON-NORMAL ボタンが表示
-2. **NORMALボタン**: 次の未完了チェックリストに直接移動
-3. **NON-NORMALボタン**: 次の未完了チェックリストに直接移動
-4. **メニュー表示**: トップメニューから各カテゴリを選択可能
-5. **チェックリスト実行**: 項目をチェック → 自動的に次の項目へフォーカス移動
-6. **完了後**: 次のチェックリストへの移動（NORMAL時のみ）
-
-### キーボードナビゲーション
-
-現在は実装されていませんが、将来的には以下のような対応が想定されます：
-
-- `↑/↓`: 項目間移動
-- `Space/Enter`: チェックトグル
-- `Esc`: メニューに戻る
-
-### チェック項目の状態遷移
-
-```
-unchecked → [クリック] → checked → [クリック] → unchecked
-    ↓                         ↓
-[Override]               [Override]
-    ↓                         ↓
-overridden ← [クリック] ← overridden
-```
-
-- **unchecked**: 未チェック（通常状態）
-- **checked**: チェック済み（緑色のチェックマーク）
-- **overridden**: オーバーライド（黄色の"OVR"表示）
-
-### 進捗表示
-
-各チェックリストの進捗は以下の形式で表示されます：
-
-```
-[✓✓__] 50% (2/4)
-```
-
-- チェック済み: `✓`
-- 未チェック: `_`
-- パーセンテージと数値
-
-## トラブルシューティング
-
-### よくある問題
-
-#### ハイドレーションエラー
-
-**原因**: サーバーサイドとクライアントサイドのレンダリング結果が不一致
-
-**解決策**: LocalStorageの読み込みを`useEffect`内で行う
-
-```typescript
-const [state, setState] = useState({}); // 初期状態は空
-
-useEffect(() => {
-  const stored = loadFromStorage();
-  if (stored) {
-    queueMicrotask(() => setState(stored));
-  }
-}, []);
-```
-
-#### LocalStorageが保存されない
-
-**原因**: プライベートブラウジングモード、またはストレージ容量制限
-
-**解決策**: `try-catch`でエラーハンドリングを追加
-
-```typescript
-try {
-  localStorage.setItem(key, value);
-} catch (error) {
-  console.error("LocalStorage save failed:", error);
-}
-```
-
-## 拡張性とカスタマイズ
-
-### 新しいチェックリストの追加
-
-1. `src/data/checklists.ts`に新しいカテゴリを追加
-2. `MenuType.NORMAL`または`MenuType.NON_NORMAL`を指定
-3. 必要に応じて`src/types/checklist.ts`の型を拡張
-
-### 新しい機能の追加
-
-1. **新しいフック**: `src/hooks/`に追加
-2. **新しいコンポーネント**: `src/components/`に追加
-3. **新しいユーティリティ**: `src/utils/`に追加
-
-### スタイルのカスタマイズ
-
-1. **カラーテーマ変更**: `src/app/globals.css`のCSS変数を編集
-2. **フォント変更**: `public/fonts/`にフォントを追加し、`globals.css`で指定
-
-## パフォーマンス最適化
-
-### React Compiler
-
-React 19のコンパイラが有効化されており、自動的に最適化されています。
-
-### メモ化
-
-必要に応じて`useCallback`と`useMemo`を使用していますが、React Compilerが自動最適化するため、過度なメモ化は避けています。
-
-### バンドルサイズ
-
-- 静的エクスポートによりサーバーサイドのオーバーヘッドなし
-- 必要最小限の依存関係のみをインストール
-
-## セキュリティとプライバシー
-
-- **データ保存**: すべてのデータはユーザーのブラウザ（LocalStorage）にのみ保存
-- **外部通信なし**: ネットワーク通信は一切行わない
-- **プライバシー**: ユーザーデータは外部に送信されない
-
-## 今後の拡張予定
-
-- [ ] キーボードナビゲーション対応
-- [ ] 音声フィードバック（チェック音）
-- [ ] チェックリストのエクスポート/インポート機能
-- [ ] カスタムチェックリストの作成UI
-- [ ] ダークモード/ライトモードの切り替え
-- [ ] PWA対応（オフライン動作）
-- [ ] タイマー機能（時間制限のあるチェック項目）
-
-## 参考リソース
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [React Documentation](https://react.dev/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-
----
-
-**GitHub Copilotへの注意**: このプロジェクトは航空機のチェックリストシステムを模倣していますが、実際の運航には使用されません。自家用車の安全確認を支援する教育・補助ツールです。コードを更新した際は、このドキュメントも最新の状態に保つようにしてください。 git 管理しているので変更日時等を記載する必要はありません。
+No state management libraries (Redux, Zustand) - intentionally kept simple with React hooks.
