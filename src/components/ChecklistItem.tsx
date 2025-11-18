@@ -18,8 +18,9 @@ export function ChecklistItem({
   isActive,
   onToggle,
 }: ChecklistItemProps) {
-  const isChecked = status === "checked";
+  const isChecked = status === "checked" || status === "checked-overridden";
   const isOverridden = status === "overridden";
+  const isCheckedOverridden = status === "checked-overridden";
 
   return (
     <div className="px-4">
@@ -37,7 +38,9 @@ export function ChecklistItem({
         {/* チェックマーク */}
         <div
           className={`w-6 h-6 flex items-center justify-center shrink-0 bg-[#6b7c94] ${
-            isOverridden ? "border-2 border-(--text-cyan)" : ""
+            isOverridden || isCheckedOverridden
+              ? "border-2 border-(--text-cyan)"
+              : ""
           }`}
         >
           {isChecked && <CheckIcon />}
@@ -46,11 +49,13 @@ export function ChecklistItem({
         {/* テキスト */}
         <div
           className={`flex-1 font-mono text-[20px] tracking-wide flex items-center gap-2 overflow-hidden ml-2 ${
-            isChecked
-              ? "text-(--text-green)"
-              : isOverridden
-                ? "text-(--text-cyan)"
-                : "text-white"
+            isCheckedOverridden
+              ? "text-(--text-cyan)"
+              : isChecked
+                ? "text-(--text-green)"
+                : isOverridden
+                  ? "text-(--text-cyan)"
+                  : "text-white"
           }`}
         >
           <span className="shrink-0">{item}</span>

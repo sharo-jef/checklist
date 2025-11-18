@@ -94,7 +94,11 @@ export function useChecklist({ categories }: UseChecklistProps) {
       const total = checklist.items.length;
       const completed = checklist.items.filter((item) => {
         const status = itemStates[categoryId]?.[checklistId]?.[item.id];
-        return status === "checked" || status === "overridden";
+        return (
+          status === "checked" ||
+          status === "overridden" ||
+          status === "checked-overridden"
+        );
       }).length;
 
       return {
@@ -178,10 +182,13 @@ export function useChecklist({ categories }: UseChecklistProps) {
       setItemStates((prev) => {
         const updatedChecklistState = { ...prev[categoryId]?.[checklistId] };
 
-        // すべての項目をoverriddenに設定
+        // すべての項目をオーバーライド（checkedの場合はchecked-overriddenに）
         checklist.items.forEach((item) => {
-          updatedChecklistState[item.id] = "overridden";
-          setItemStatus(categoryId, checklistId, item.id, "overridden");
+          const currentStatus = updatedChecklistState[item.id];
+          const newStatus =
+            currentStatus === "checked" ? "checked-overridden" : "overridden";
+          updatedChecklistState[item.id] = newStatus;
+          setItemStatus(categoryId, checklistId, item.id, newStatus);
         });
 
         return {

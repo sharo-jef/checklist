@@ -14,7 +14,11 @@ export enum MenuType {
 /**
  * チェックリスト項目のステータス
  */
-export type ChecklistItemStatus = "unchecked" | "checked" | "overridden";
+export type ChecklistItemStatus =
+  | "unchecked"
+  | "checked"
+  | "overridden"
+  | "checked-overridden";
 
 /**
  * チェックリスト項目

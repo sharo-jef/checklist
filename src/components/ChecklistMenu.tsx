@@ -33,7 +33,11 @@ export function ChecklistMenu({
 
     return checklist.items.every((item) => {
       const status = checklistState[item.id];
-      return status === "checked" || status === "overridden";
+      return (
+        status === "checked" ||
+        status === "overridden" ||
+        status === "checked-overridden"
+      );
     });
   };
 
@@ -45,7 +49,9 @@ export function ChecklistMenu({
     if (!checklistState) return false;
 
     return checklist.items.every(
-      (item) => checklistState[item.id] === "overridden"
+      (item) =>
+        checklistState[item.id] === "overridden" ||
+        checklistState[item.id] === "checked-overridden"
     );
   };
 

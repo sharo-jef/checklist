@@ -36,10 +36,17 @@ export function ChecklistDisplay({
   const allItemsChecked =
     items.length > 0 &&
     items.every(
-      (item) => item.status === "checked" || item.status === "overridden"
+      (item) =>
+        item.status === "checked" ||
+        item.status === "overridden" ||
+        item.status === "checked-overridden"
     );
   const allItemsOverridden =
-    items.length > 0 && items.every((item) => item.status === "overridden");
+    items.length > 0 &&
+    items.every(
+      (item) =>
+        item.status === "overridden" || item.status === "checked-overridden"
+    );
   const canGoNext = allItemsChecked && hasNextChecklist;
 
   const handleItemOverride = () => {
