@@ -1,6 +1,6 @@
 import { StoredData, ChecklistItemStatus } from "@/types/checklist";
 
-const STORAGE_KEY = "b747-checklist-state";
+const STORAGE_KEY = "checklist-state";
 const STORAGE_VERSION = "2.0.0";
 
 /**
@@ -22,19 +22,28 @@ export function loadFromStorage(): StoredData | null {
     // バージョンチェック - 旧バージョンの場合は移行
     if (data.version === "1.0.0") {
       console.log("Migrating storage from v1.0.0 to v2.0.0");
-      const oldData = data as any;
+      const oldData = data as unknown as {
+        checklistStates?: Record<
+          string,
+          Record<string, Record<string, boolean>>
+        >;
+        overriddenStates?: Record<
+          string,
+          Record<string, Record<string, boolean>>
+        >;
+      };
       const newItemStates: StoredData["itemStates"] = {};
 
       // checklistStatesとoverriddenStatesを統合
       for (const categoryId in oldData.checklistStates || {}) {
         newItemStates[categoryId] = {};
-        for (const checklistId in oldData.checklistStates[categoryId] || {}) {
+        for (const checklistId in oldData.checklistStates?.[categoryId] || {}) {
           newItemStates[categoryId][checklistId] = {};
-          for (const itemId in oldData.checklistStates[categoryId][
+          for (const itemId in oldData.checklistStates?.[categoryId]?.[
             checklistId
           ] || {}) {
             const isChecked =
-              oldData.checklistStates[categoryId][checklistId][itemId];
+              oldData.checklistStates?.[categoryId]?.[checklistId]?.[itemId];
             const isOverridden =
               oldData.overriddenStates?.[categoryId]?.[checklistId]?.[itemId];
 

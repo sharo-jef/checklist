@@ -135,7 +135,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
     setItemStates({});
     // LocalStorageもクリア
     if (typeof window !== "undefined") {
-      localStorage.removeItem("b747-checklist-state");
+      localStorage.removeItem("checklist-state");
     }
   }, []);
 
@@ -156,10 +156,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
           const stored = loadFromStorage();
           if (stored) {
             stored.itemStates = newStates;
-            localStorage.setItem(
-              "b747-checklist-state",
-              JSON.stringify(stored)
-            );
+            localStorage.setItem("checklist-state", JSON.stringify(stored));
           }
         }
 
@@ -217,7 +214,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
         const stored = loadFromStorage();
         if (stored) {
           stored.itemStates = newStates;
-          localStorage.setItem("b747-checklist-state", JSON.stringify(stored));
+          localStorage.setItem("checklist-state", JSON.stringify(stored));
         }
       }
       return newStates;
@@ -238,7 +235,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
         const stored = loadFromStorage();
         if (stored) {
           stored.itemStates = newStates;
-          localStorage.setItem("b747-checklist-state", JSON.stringify(stored));
+          localStorage.setItem("checklist-state", JSON.stringify(stored));
         }
       }
       return newStates;
