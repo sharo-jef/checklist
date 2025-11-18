@@ -75,26 +75,18 @@ a,
 @layer utilities {
   .text-\(--text-green\) {
     color: var(--text-green);
-    text-shadow:
-      0 0 3px rgba(14, 253, 18, 0.4),
-      0 0 6px rgba(14, 253, 18, 0.2);
   }
 
   .text-\(--text-green\)\/60 {
     color: rgb(14 253 18 / 0.6);
-    text-shadow: 0 0 3px rgba(14, 253, 18, 0.3);
   }
 
   .text-\(--text-green\)\/80 {
     color: rgb(14 253 18 / 0.8);
-    text-shadow: 0 0 3px rgba(14, 253, 18, 0.35);
   }
 
   .text-\(--text-cyan\) {
     color: var(--text-cyan);
-    text-shadow:
-      0 0 3px rgba(56, 218, 255, 0.4),
-      0 0 6px rgba(56, 218, 255, 0.2);
   }
 
   .border-\(--menu-green\) {
@@ -112,10 +104,4 @@ a,
   .bg-\(--menu-green\)\/30 {
     background-color: rgb(15 233 19 / 0.3);
   }
-}
-
-/* SVG green glow */
-[stroke="var(--text-green)"],
-[stroke="var(--menu-green)"] {
-  filter: drop-shadow(0 0 2px rgba(14, 253, 18, 0.5));
 }
