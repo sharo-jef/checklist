@@ -185,6 +185,37 @@ export function useChecklist({ categories }: UseChecklistProps) {
     []
   );
 
+  // チェックリスト全体をオーバーライド
+  const overrideChecklist = useCallback(
+    (categoryId: string, checklistId: string) => {
+      const category = categories.find((c) => c.id === categoryId);
+      const checklist = category?.checklists.find(
+        (cl) => cl.id === checklistId
+      );
+
+      if (!checklist) return;
+
+      setItemStates((prev) => {
+        const updatedChecklistState = { ...prev[categoryId]?.[checklistId] };
+
+        // すべての項目をoverriddenに設定
+        checklist.items.forEach((item) => {
+          updatedChecklistState[item.id] = "overridden";
+          setItemStatus(categoryId, checklistId, item.id, "overridden");
+        });
+
+        return {
+          ...prev,
+          [categoryId]: {
+            ...prev[categoryId],
+            [checklistId]: updatedChecklistState,
+          },
+        };
+      });
+    },
+    [categories]
+  );
+
   // NORMALメニューのすべてをリセット
   const resetNormal = useCallback(() => {
     setItemStates((prev) => {
@@ -242,6 +273,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
     resetChecklist,
     resetNormal,
     resetNonNormal,
+    overrideChecklist,
 
     // 計算値
     getProgress,
