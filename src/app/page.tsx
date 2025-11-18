@@ -26,6 +26,7 @@ export default function Home() {
     resetAll,
     resetNormal,
     resetNonNormal,
+    resetChecklist,
     overrideChecklist,
     itemStates,
   } = useChecklist({ categories: checklistData });
@@ -197,6 +198,13 @@ export default function Home() {
     setActiveItemIndex(-1);
   };
 
+  const handleChecklistReset = () => {
+    if (!currentChecklist) return;
+    resetChecklist(activeCategory, currentChecklist.id);
+    // リセット後、最初の項目にアクティブインデックスを設定
+    setActiveItemIndex(0);
+  };
+
   return (
     <CRTScreen>
       <TopMenu
@@ -221,6 +229,7 @@ export default function Home() {
           onToggleItem={handleToggleItem}
           onItemOverride={handleItemOverride}
           onChecklistOverride={handleChecklistOverride}
+          onChecklistReset={handleChecklistReset}
           onNext={handleNext}
           showNextButton={true}
           hasNextChecklist={hasNextChecklist()}
@@ -251,6 +260,7 @@ export default function Home() {
           onToggleItem={handleToggleItem}
           onItemOverride={handleItemOverride}
           onChecklistOverride={handleChecklistOverride}
+          onChecklistReset={handleChecklistReset}
         />
       )}
     </CRTScreen>

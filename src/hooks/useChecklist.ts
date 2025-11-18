@@ -174,13 +174,29 @@ export function useChecklist({ categories }: UseChecklistProps) {
   // 特定のチェックリストをリセット
   const resetChecklist = useCallback(
     (categoryId: string, checklistId: string) => {
-      setItemStates((prev) => ({
-        ...prev,
-        [categoryId]: {
-          ...prev[categoryId],
-          [checklistId]: {},
-        },
-      }));
+      setItemStates((prev) => {
+        const newStates = {
+          ...prev,
+          [categoryId]: {
+            ...prev[categoryId],
+            [checklistId]: {},
+          },
+        };
+
+        // LocalStorageも更新
+        if (typeof window !== "undefined") {
+          const stored = loadFromStorage();
+          if (stored) {
+            stored.itemStates = newStates;
+            localStorage.setItem(
+              "b747-checklist-state",
+              JSON.stringify(stored)
+            );
+          }
+        }
+
+        return newStates;
+      });
     },
     []
   );

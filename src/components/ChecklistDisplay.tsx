@@ -14,6 +14,7 @@ interface ChecklistDisplayProps {
   onToggleItem: (itemId: string) => void;
   onItemOverride?: (itemId: string) => void;
   onChecklistOverride?: () => void;
+  onChecklistReset?: () => void;
   onNext?: () => void;
   showNextButton?: boolean;
   hasNextChecklist?: boolean;
@@ -26,6 +27,7 @@ export function ChecklistDisplay({
   onToggleItem,
   onItemOverride,
   onChecklistOverride,
+  onChecklistReset,
   onNext,
   showNextButton = false,
   hasNextChecklist = false,
@@ -117,7 +119,10 @@ export function ChecklistDisplay({
             <br />
             OVRD
           </button>
-          <button className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white">
+          <button
+            onClick={onChecklistReset}
+            className="flex-1 py-1 text-center font-mono text-xl tracking-wide leading-none bg-[#4a5568] text-white border-2 border-transparent hover:border-white"
+          >
             CHKL
             <br />
             RESET
