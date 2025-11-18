@@ -125,6 +125,13 @@ export const checklistData: ChecklistCategory[] = [
           },
           {
             id: "bd-6",
+            item: "Room lamp",
+            value: "AUTO",
+            completed: false,
+            required: true,
+          },
+          {
+            id: "bd-7",
             item: "Parking brake",
             value: "Release",
             completed: false,
@@ -189,6 +196,40 @@ export const checklistData: ChecklistCategory[] = [
             id: "pk-7",
             item: "Master switch",
             value: "CUTOFF",
+            completed: false,
+            required: true,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "secure",
+    title: "SECURE",
+    menuType: MenuType.NORMAL,
+    checklists: [
+      {
+        id: "secure-check",
+        name: "SECURE",
+        items: [
+          {
+            id: "sc-1",
+            item: "ETC card",
+            value: "REMOVED",
+            completed: false,
+            required: true,
+          },
+          {
+            id: "sc-2",
+            item: "Room lamp",
+            value: "AUTO",
+            completed: false,
+            required: true,
+          },
+          {
+            id: "sc-3",
+            item: "Doors",
+            value: "LOCKED",
             completed: false,
             required: true,
           },
