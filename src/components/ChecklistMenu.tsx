@@ -53,6 +53,7 @@ export function ChecklistMenu({
     <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden">
       {menuType && (
         <div className="p-3 pt-0">
+          {/* 本来は NON-NORMAL MENU のサブメニューを開いた際に NON-NORMAL の文字の部分が戻るボタンになり、緑色になる */}
           <div
             className={`py-2 ${/*menuType === MenuType.NON_NORMAL*/ false ? "bg-(--menu-green)" : ""}`}
           >
