@@ -12,6 +12,18 @@ interface UseChecklistProps {
 }
 
 /**
+ * Type alias for item states map structure.
+ * Maps: categoryId → checklistId → itemId → status
+ */
+export type ItemStatesMap = {
+  [categoryId: string]: {
+    [checklistId: string]: {
+      [itemId: string]: ChecklistItemStatus;
+    };
+  };
+};
+
+/**
  * チェックリスト状態管理フック
  */
 export function useChecklist({ categories }: UseChecklistProps) {
@@ -21,13 +33,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
   );
 
   // 初期状態は空オブジェクト（サーバーとクライアントで一致）
-  const [itemStates, setItemStates] = useState<{
-    [categoryId: string]: {
-      [checklistId: string]: {
-        [itemId: string]: ChecklistItemStatus;
-      };
-    };
-  }>({});
+  const [itemStates, setItemStates] = useState<ItemStatesMap>({});
 
   // クライアントサイドでのみLocalStorageから読み込む（ハイドレーション対応）
   useEffect(() => {
