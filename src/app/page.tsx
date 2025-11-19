@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { TopMenu } from "@/components/TopMenu";
 import { ChecklistMenu } from "@/components/ChecklistMenu";
 import { ChecklistDisplay } from "@/components/ChecklistDisplay";
@@ -10,6 +10,11 @@ import { checklistData } from "@/data/checklists";
 import { MenuType } from "@/types/checklist";
 import { isItemComplete } from "@/utils/checklist";
 import { toggleStatus, overrideStatus } from "@/utils/transitions";
+import {
+  getFirstUncheckedIndex,
+  getNextIncompleteChecklist,
+  hasNextChecklist,
+} from "@/utils/navigation";
 
 type ViewMode = "default" | "menu" | "checklist";
 
@@ -35,20 +40,13 @@ export default function Home() {
   const currentChecklist = getCurrentChecklist();
   const currentItems = getCurrentItems();
 
-  // カテゴリの最初の未チェック項目のインデックスを取得
-  const getFirstUncheckedIndex = (categoryId: string) => {
-    const category = checklistData.find((cat) => cat.id === categoryId);
-    const checklist = category?.checklists[0];
-
-    if (!checklist) return -1;
-
-    const firstUncheckedIndex = checklist.items.findIndex(
-      (item) =>
-        (itemStates[categoryId]?.[checklist.id]?.[item.id] ?? "unchecked") ===
-        "unchecked"
-    );
-    return firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1;
-  };
+  // Memoize navigation computations to avoid recalculation on every render
+  const navigation = useMemo(
+    () => ({
+      hasNext: hasNextChecklist(activeCategory, checklistData, MenuType.NORMAL),
+    }),
+    [activeCategory]
+  );
 
   const handleMenuChange = (menu: MenuType) => {
     setActiveMenu(menu);
@@ -60,53 +58,34 @@ export default function Home() {
     setViewMode("default");
   };
 
-  // 指定されたメニュータイプで次の未完了チェックリストを見つける
-  const getNextIncompleteChecklist = (menuType: MenuType): string | null => {
-    const categories = checklistData.filter((cat) => cat.menuType === menuType);
-
-    if (categories.length === 0) return null;
-
-    // 最初の未完了チェックリストを探す
-    for (const category of categories) {
-      const checklist = category.checklists[0];
-      if (!checklist) continue;
-
-      const checklistState = itemStates[category.id]?.[checklist.id];
-      if (!checklistState) {
-        // まだ何もチェックされていない場合、これが次のチェックリスト
-        return category.id;
-      }
-
-      const isComplete = checklist.items.every((item) => {
-        const status = checklistState[item.id];
-        return isItemComplete(status);
-      });
-
-      if (!isComplete) {
-        return category.id;
-      }
-    }
-
-    // すべて完了している場合は最後のチェックリストを返す
-    return categories[categories.length - 1].id;
-  };
-
   const handleNormalButton = () => {
-    const categoryId = getNextIncompleteChecklist(MenuType.NORMAL);
+    const categoryId = getNextIncompleteChecklist(
+      MenuType.NORMAL,
+      checklistData,
+      itemStates
+    );
     if (!categoryId) return;
     setActiveMenu(MenuType.NORMAL);
     setActiveCategory(categoryId);
     setViewMode("checklist");
-    setActiveItemIndex(getFirstUncheckedIndex(categoryId));
+    setActiveItemIndex(
+      getFirstUncheckedIndex(categoryId, checklistData, itemStates)
+    );
   };
 
   const handleNonNormalButton = () => {
-    const categoryId = getNextIncompleteChecklist(MenuType.NON_NORMAL);
+    const categoryId = getNextIncompleteChecklist(
+      MenuType.NON_NORMAL,
+      checklistData,
+      itemStates
+    );
     if (!categoryId) return;
     setActiveMenu(MenuType.NON_NORMAL);
     setActiveCategory(categoryId);
     setViewMode("checklist");
-    setActiveItemIndex(getFirstUncheckedIndex(categoryId));
+    setActiveItemIndex(
+      getFirstUncheckedIndex(categoryId, checklistData, itemStates)
+    );
   };
 
   const handleResetNormal = () => {
@@ -127,7 +106,9 @@ export default function Home() {
   const handleChecklistSelect = (categoryId: string) => {
     setActiveCategory(categoryId);
     setViewMode("checklist");
-    setActiveItemIndex(getFirstUncheckedIndex(categoryId));
+    setActiveItemIndex(
+      getFirstUncheckedIndex(categoryId, checklistData, itemStates)
+    );
   };
 
   const handleNext = () => {
@@ -149,19 +130,10 @@ export default function Home() {
     if (currentIndex >= 0 && currentIndex < normalCategories.length - 1) {
       const nextCategory = normalCategories[currentIndex + 1];
       setActiveCategory(nextCategory.id);
-      setActiveItemIndex(getFirstUncheckedIndex(nextCategory.id));
+      setActiveItemIndex(
+        getFirstUncheckedIndex(nextCategory.id, checklistData, itemStates)
+      );
     }
-  };
-
-  // 次のチェックリストがあるかどうかを判定
-  const hasNextChecklist = () => {
-    const normalCategories = checklistData.filter(
-      (cat) => cat.menuType === MenuType.NORMAL
-    );
-    const currentIndex = normalCategories.findIndex(
-      (cat) => cat.id === activeCategory
-    );
-    return currentIndex >= 0 && currentIndex < normalCategories.length - 1;
   };
 
   // チェックリスト表示中かどうか
@@ -298,7 +270,7 @@ export default function Home() {
           onChecklistReset={handleChecklistReset}
           onNext={handleNext}
           showControls={true}
-          hasNextChecklist={hasNextChecklist()}
+          hasNextChecklist={navigation.hasNext}
         />
       )}
       {activeMenu === MenuType.RESETS && viewMode === "menu" && (
