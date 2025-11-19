@@ -45,7 +45,7 @@ export default function Home() {
     () => ({
       hasNext: hasNextChecklist(activeCategory, checklistData, MenuType.NORMAL),
     }),
-    [activeCategory]
+    [activeCategory, itemStates]
   );
 
   const handleMenuChange = (menu: MenuType) => {
