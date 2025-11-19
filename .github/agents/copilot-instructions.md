@@ -9,14 +9,17 @@ Auto-generated from all feature plans. Last updated: 2025-11-20
 ## Project Structure
 
 ```text
-backend/
-frontend/
-tests/
+checklist/           # project root
+├── src/             # Next.js app source code
+├── public/          # static assets
+├── next.config.ts   # Next.js config
+├── package.json
+└── ...              # other config files
 ```
 
 ## Commands
 
-npm test; npm run lint
+npm run lint
 
 ## Code Style
 

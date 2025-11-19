@@ -1,7 +1,7 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Extract Exit Menu Button Component
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `004-exit-menu-component` | **Date**: 2025-11-20 | **Spec**: [spec.md](spec.md)
+**Input**: Feature specification from `/specs/004-exit-menu-component/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
@@ -95,7 +95,7 @@ All constitution principles remain satisfied after completing Phase 1 design:
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
+specs/004-exit-menu-component/
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)
 ├── data-model.md        # Phase 1 output (/speckit.plan command)
@@ -110,11 +110,9 @@ specs/[###-feature]/
 src/
 ├── components/
 │   ├── ExitMenuButton.tsx     # NEW: Extracted reusable button component
-│   ├── TabButton.tsx           # Existing: Reference pattern for component structure
-│   ├── ChecklistMenu.tsx       # Modified: Uses ExitMenuButton (removed duplicate button)
-│   └── ResetsMenu.tsx          # Modified: Uses ExitMenuButton (removed duplicate button)
+│   └── TabButton.tsx           # Existing: Reference pattern for component structure
 ├── app/
-│   └── page.tsx                # Modified: Uses ExitMenuButton (removed 2 duplicate buttons)
+│   └── page.tsx                # Modified: Uses ExitMenuButton (removed 3 duplicate buttons)
 └── types/
     └── checklist.ts            # Existing: Type definitions (no changes needed)
 
@@ -126,7 +124,7 @@ specs/004-exit-menu-component/
 └── contracts/                  # Phase 1 output (component props interface)
 ```
 
-**Structure Decision**: Single Next.js project structure. New component in `src/components/` following existing patterns. Three files modified to use the new component: `page.tsx` (2 instances), `ChecklistMenu.tsx` (removed inline button), `ResetsMenu.tsx` (removed inline button).
+**Structure Decision**: Single Next.js project structure. New component in `src/components/` following existing patterns. Only `page.tsx` is modified to use the new component, with 3 instances replaced.
 
 ## Complexity Tracking
 
