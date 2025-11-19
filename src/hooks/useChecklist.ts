@@ -4,6 +4,7 @@ import {
   ChecklistItem,
   ChecklistItemStatus,
   Progress,
+  ItemStatesMap,
 } from "@/types/checklist";
 import { loadFromStorage, setItemStatus } from "@/utils/storage";
 
@@ -21,13 +22,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
   );
 
   // 初期状態は空オブジェクト（サーバーとクライアントで一致）
-  const [itemStates, setItemStates] = useState<{
-    [categoryId: string]: {
-      [checklistId: string]: {
-        [itemId: string]: ChecklistItemStatus;
-      };
-    };
-  }>({});
+  const [itemStates, setItemStates] = useState<ItemStatesMap>({});
 
   // クライアントサイドでのみLocalStorageから読み込む（ハイドレーション対応）
   useEffect(() => {
