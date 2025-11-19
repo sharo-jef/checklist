@@ -1,5 +1,6 @@
 import { CheckIcon } from "./CheckIcon";
 import { ChecklistItemStatus } from "@/types/checklist";
+import { DOTTED_SEPARATOR_REPEATS } from "@/constants/ui";
 
 interface ChecklistItemProps {
   item: string;
@@ -60,7 +61,7 @@ export function ChecklistItem({
         >
           <span className="shrink-0">{item}</span>
           <span className="flex-1 min-w-0 overflow-hidden whitespace-nowrap">
-            {". ".repeat(400)}
+            {". ".repeat(DOTTED_SEPARATOR_REPEATS)}
           </span>
           <span className="shrink-0">{value}</span>
         </div>
