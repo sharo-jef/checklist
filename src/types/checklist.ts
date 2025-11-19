@@ -22,6 +22,10 @@ export type ChecklistItemStatus =
 
 /**
  * チェックリスト項目
+ *
+ * Note: 完了状態は itemStates マッピング（ChecklistItemStatus）で管理され、
+ * この型には含まれません。状態はカテゴリID → チェックリストID → アイテムID の
+ * 階層構造で LocalStorage に保存されます。
  */
 export interface ChecklistItem {
   /** 一意識別子 */
@@ -30,8 +34,6 @@ export interface ChecklistItem {
   item: string;
   /** ステータス/値（右側） */
   value: string;
-  /** 完了状態（後方互換性のため残す） */
-  completed: boolean;
   /** 必須項目フラグ */
   required?: boolean;
   /** 補足メモ */
@@ -91,6 +93,18 @@ export interface Progress {
 }
 
 /**
+ * アイテム状態マップ構造の型エイリアス
+ * マッピング: カテゴリID → チェックリストID → アイテムID → ステータス
+ */
+export type ItemStatesMap = {
+  [categoryId: string]: {
+    [checklistId: string]: {
+      [itemId: string]: ChecklistItemStatus;
+    };
+  };
+};
+
+/**
  * LocalStorage保存用データ
  */
 export interface StoredData {
@@ -99,11 +113,5 @@ export interface StoredData {
   /** 最終更新日時 */
   lastUpdated: number;
   /** チェックリスト状態（カテゴリID -> チェックリストID -> アイテムID -> status） */
-  itemStates: {
-    [categoryId: string]: {
-      [checklistId: string]: {
-        [itemId: string]: ChecklistItemStatus;
-      };
-    };
-  };
+  itemStates: ItemStatesMap;
 }

@@ -4,8 +4,15 @@ import {
   ChecklistItem,
   ChecklistItemStatus,
   Progress,
+  ItemStatesMap,
 } from "@/types/checklist";
-import { loadFromStorage, setItemStatus } from "@/utils/storage";
+import {
+  loadFromStorage,
+  setItemStatus,
+  resetAllStorage,
+  resetChecklistInStorage,
+  resetCategoriesInStorage,
+} from "@/utils/storage";
 
 interface UseChecklistProps {
   categories: ChecklistCategory[];
@@ -21,13 +28,7 @@ export function useChecklist({ categories }: UseChecklistProps) {
   );
 
   // 初期状態は空オブジェクト（サーバーとクライアントで一致）
-  const [itemStates, setItemStates] = useState<{
-    [categoryId: string]: {
-      [checklistId: string]: {
-        [itemId: string]: ChecklistItemStatus;
-      };
-    };
-  }>({});
+  const [itemStates, setItemStates] = useState<ItemStatesMap>({});
 
   // クライアントサイドでのみLocalStorageから読み込む（ハイドレーション対応）
   useEffect(() => {
@@ -132,36 +133,18 @@ export function useChecklist({ categories }: UseChecklistProps) {
 
   // すべてをリセット
   const resetAll = useCallback(() => {
-    setItemStates({});
-    // LocalStorageもクリア
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("checklist-state");
+    if (resetAllStorage()) {
+      setItemStates({});
     }
   }, []);
 
   // 特定のチェックリストをリセット
   const resetChecklist = useCallback(
     (categoryId: string, checklistId: string) => {
-      setItemStates((prev) => {
-        const newStates = {
-          ...prev,
-          [categoryId]: {
-            ...prev[categoryId],
-            [checklistId]: {},
-          },
-        };
-
-        // LocalStorageも更新
-        if (typeof window !== "undefined") {
-          const stored = loadFromStorage();
-          if (stored) {
-            stored.itemStates = newStates;
-            localStorage.setItem("checklist-state", JSON.stringify(stored));
-          }
-        }
-
-        return newStates;
-      });
+      if (resetChecklistInStorage(categoryId, checklistId)) {
+        const data = loadFromStorage();
+        setItemStates(data?.itemStates || {});
+      }
     },
     []
   );
@@ -202,44 +185,26 @@ export function useChecklist({ categories }: UseChecklistProps) {
 
   // NORMALメニューのすべてをリセット
   const resetNormal = useCallback(() => {
-    setItemStates((prev) => {
-      const newStates = { ...prev };
-      categories
-        .filter((cat) => cat.menuType === "normal")
-        .forEach((cat) => {
-          delete newStates[cat.id];
-        });
-      // LocalStorageも更新
-      if (typeof window !== "undefined") {
-        const stored = loadFromStorage();
-        if (stored) {
-          stored.itemStates = newStates;
-          localStorage.setItem("checklist-state", JSON.stringify(stored));
-        }
-      }
-      return newStates;
-    });
+    const normalIds = categories
+      .filter((cat) => cat.menuType === "normal")
+      .map((cat) => cat.id);
+
+    if (resetCategoriesInStorage(normalIds)) {
+      const data = loadFromStorage();
+      setItemStates(data?.itemStates || {});
+    }
   }, [categories]);
 
   // NON-NORMALメニューのすべてをリセット
   const resetNonNormal = useCallback(() => {
-    setItemStates((prev) => {
-      const newStates = { ...prev };
-      categories
-        .filter((cat) => cat.menuType === "non-normal")
-        .forEach((cat) => {
-          delete newStates[cat.id];
-        });
-      // LocalStorageも更新
-      if (typeof window !== "undefined") {
-        const stored = loadFromStorage();
-        if (stored) {
-          stored.itemStates = newStates;
-          localStorage.setItem("checklist-state", JSON.stringify(stored));
-        }
-      }
-      return newStates;
-    });
+    const nonNormalIds = categories
+      .filter((cat) => cat.menuType === "non-normal")
+      .map((cat) => cat.id);
+
+    if (resetCategoriesInStorage(nonNormalIds)) {
+      const data = loadFromStorage();
+      setItemStates(data?.itemStates || {});
+    }
   }, [categories]);
 
   return {
