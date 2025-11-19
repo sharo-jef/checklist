@@ -5,6 +5,7 @@ import { TopMenu } from "@/components/TopMenu";
 import { ChecklistMenu } from "@/components/ChecklistMenu";
 import { ChecklistDisplay } from "@/components/ChecklistDisplay";
 import { ResetsMenu } from "@/components/ResetsMenu";
+import { ExitMenuButton } from "@/components/ExitMenuButton";
 import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
 import { MenuType, ChecklistItemStatus } from "@/types/checklist";
@@ -327,12 +328,7 @@ export default function Home() {
             menuType={MenuType.NORMAL}
           />
           <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
-            <button
-              onClick={handleExitMenu}
-              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white whitespace-pre-line"
-            >
-              {"EXIT\nMENU"}
-            </button>
+            <ExitMenuButton onClick={handleExitMenu} />
           </div>
         </>
       )}
@@ -359,12 +355,7 @@ export default function Home() {
             onExitMenu={handleExitMenu}
           />
           <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
-            <button
-              onClick={handleExitMenu}
-              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white whitespace-pre-line"
-            >
-              {"EXIT\nMENU"}
-            </button>
+            <ExitMenuButton onClick={handleExitMenu} />
           </div>
         </>
       )}
@@ -379,12 +370,7 @@ export default function Home() {
             menuType={MenuType.NON_NORMAL}
           />
           <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
-            <button
-              onClick={handleExitMenu}
-              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white whitespace-pre-line"
-            >
-              {"EXIT\nMENU"}
-            </button>
+            <ExitMenuButton onClick={handleExitMenu} />
           </div>
         </>
       )}
