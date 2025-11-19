@@ -156,3 +156,57 @@ export function setItemStatus(
 
   return saveToStorage({ itemStates });
 }
+
+/**
+ * 特定のチェックリストをリセット
+ */
+export function resetChecklistInStorage(
+  categoryId: string,
+  checklistId: string
+): boolean {
+  const data = loadFromStorage();
+  if (!data) {
+    return false;
+  }
+
+  const newItemStates = {
+    ...data.itemStates,
+    [categoryId]: {
+      ...(data.itemStates[categoryId] || {}),
+      [checklistId]: {},
+    },
+  };
+
+  return saveToStorage({ itemStates: newItemStates });
+}
+
+/**
+ * 複数のカテゴリをリセット
+ */
+export function resetCategoriesInStorage(categoryIds: string[]): boolean {
+  // 空配列は有効な操作（no-op）
+  if (categoryIds.length === 0) {
+    return true;
+  }
+
+  const data = loadFromStorage();
+  if (!data) {
+    return false;
+  }
+
+  const newItemStates = { ...data.itemStates };
+
+  // バッチ操作: すべての削除を実行してから一度だけ保存
+  categoryIds.forEach((categoryId) => {
+    delete newItemStates[categoryId];
+  });
+
+  return saveToStorage({ itemStates: newItemStates });
+}
+
+/**
+ * すべてのチェックリスト状態をリセット
+ */
+export function resetAllStorage(): boolean {
+  return clearStorage();
+}
