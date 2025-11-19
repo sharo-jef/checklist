@@ -47,7 +47,8 @@ export default function Home() {
       nextNormalChecklist: getNextIncompleteChecklist(MenuType.NORMAL, checklistData, itemStates),
       nextNonNormalChecklist: getNextIncompleteChecklist(MenuType.NON_NORMAL, checklistData, itemStates),
     }),
-    [activeCategory, itemStates, checklistData]
+    // checklistData is a static constant and doesn't need to be in dependencies
+    [activeCategory, itemStates]
   );
 
   const handleMenuChange = (menu: MenuType) => {
