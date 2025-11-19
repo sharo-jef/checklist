@@ -91,6 +91,18 @@ export interface Progress {
 }
 
 /**
+ * Type alias for item states map structure.
+ * Maps: categoryId → checklistId → itemId → status
+ */
+export type ItemStatesMap = {
+  [categoryId: string]: {
+    [checklistId: string]: {
+      [itemId: string]: ChecklistItemStatus;
+    };
+  };
+};
+
+/**
  * LocalStorage保存用データ
  */
 export interface StoredData {
@@ -99,11 +111,5 @@ export interface StoredData {
   /** 最終更新日時 */
   lastUpdated: number;
   /** チェックリスト状態（カテゴリID -> チェックリストID -> アイテムID -> status） */
-  itemStates: {
-    [categoryId: string]: {
-      [checklistId: string]: {
-        [itemId: string]: ChecklistItemStatus;
-      };
-    };
-  };
+  itemStates: ItemStatesMap;
 }

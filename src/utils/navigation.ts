@@ -8,22 +8,10 @@
 
 import {
   ChecklistCategory,
-  ChecklistItemStatus,
   MenuType,
+  ItemStatesMap,
 } from "@/types/checklist";
 import { isItemComplete } from "@/utils/checklist";
-
-/**
- * Type alias for item states map structure.
- * Maps: categoryId → checklistId → itemId → status
- */
-type ItemStatesMap = {
-  [categoryId: string]: {
-    [checklistId: string]: {
-      [itemId: string]: ChecklistItemStatus;
-    };
-  };
-};
 
 /**
  * Finds the index of the first unchecked item in a category's first checklist.
