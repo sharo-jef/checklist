@@ -21,7 +21,7 @@ export function loadFromStorage(): StoredData | null {
 
     // バージョンチェック - 旧バージョンの場合は移行
     if (data.version === "1.0.0") {
-      console.log("Migrating storage from v1.0.0 to v2.0.0");
+      // Silently migrate storage from v1.0.0 to v2.0.0
       const oldData = data as unknown as {
         checklistStates?: Record<
           string,

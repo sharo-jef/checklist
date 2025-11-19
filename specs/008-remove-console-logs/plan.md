@@ -1,7 +1,7 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Remove Development Logging from Production Code
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `008-remove-console-logs` | **Date**: 2025-11-20 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/008-remove-console-logs/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
@@ -26,42 +26,67 @@ Remove all `console.log` development logging statements from production code whi
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### Static-First Architecture
+
 ✅ **PASS** - No changes to static export model. This is a code cleanup task only.
 
 ### Hydration Safety
+
 ✅ **PASS** - Removing console.log statements does not affect hydration behavior or LocalStorage loading patterns.
 
 ### Immutable Data Definitions
+
 ✅ **PASS** - No changes to checklist definitions or runtime state management.
 
 ### LocalStorage Versioning & Migration
+
 ✅ **PASS** - Migration logic remains functional; only the console.log message is removed. Storage version stays 2.0.0.
 
 ### Aviation-Inspired UX Consistency
+
 ✅ **PASS** - No UI changes. Console logging is invisible to end users.
 
 ### Type Safety & Path Aliases
+
 ✅ **PASS** - No type changes or import modifications required.
 
 ### Dependency Policy
+
 ✅ **PASS** - No new dependencies. This is a code deletion task.
 
 ### Mobile-First Constraints
+
 ✅ **PASS** - No impact on mobile functionality or viewport configuration.
 
 **GATE RESULT**: ✅ ALL GATES PASS - Proceed to Phase 0
+
+---
+
+### Post-Phase 1 Re-evaluation
+
+✅ **PASS** - All gates remain satisfied after design phase.
+
+**Key confirmations**:
+
+- No data model changes (data-model.md confirms no schema modifications)
+- No API contract changes (contracts/console-cleanup-contract.md specifies code-only modifications)
+- Error handling preserved (console.error/warn retained where appropriate)
+- Migration logic intact (only logging removed, not functionality)
+- Static export compatibility maintained (no environment variable dependencies)
+
+**GATE RESULT**: ✅ ALL GATES PASS - Ready for Phase 2 (Implementation)
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
+specs/008-remove-console-logs/
 ├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
+├── research.md          # Phase 0 output (/speckit.plan command) ✅ COMPLETE
+├── data-model.md        # Phase 1 output (/speckit.plan command) ✅ COMPLETE
+├── quickstart.md        # Phase 1 output (/speckit.plan command) ✅ COMPLETE
+├── contracts/           # Phase 1 output (/speckit.plan command) ✅ COMPLETE
+│   └── console-cleanup-contract.md
 └── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
 ```
 
@@ -101,8 +126,9 @@ src/
 ```
 
 **Structure Decision**: Single Next.js project structure. Files requiring changes:
+
 - `src/utils/storage.ts` - Remove console.log from migration message (line 24)
-- `src/utils/transitions.ts` - Remove console.error from transition validation (line 80)  
+- `src/utils/transitions.ts` - Remove console.error from transition validation (line 80)
 - `src/hooks/useLocalStorage.ts` - Remove console.error from error handlers (lines 23, 37)
 
 **Preservation Decision**: Keep all console.warn and console.error statements in storage.ts error handlers as they provide legitimate production debugging information for storage failures, version mismatches, and data corruption issues.
