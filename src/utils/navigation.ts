@@ -9,9 +9,9 @@
 import {
   ChecklistCategory,
   MenuType,
+  ItemStatesMap,
 } from "@/types/checklist";
 import { isItemComplete } from "@/utils/checklist";
-import type { ItemStatesMap } from "@/hooks/useChecklist";
 
 /**
  * Finds the index of the first unchecked item in a category's first checklist.

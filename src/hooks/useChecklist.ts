@@ -4,24 +4,13 @@ import {
   ChecklistItem,
   ChecklistItemStatus,
   Progress,
+  ItemStatesMap,
 } from "@/types/checklist";
 import { loadFromStorage, setItemStatus } from "@/utils/storage";
 
 interface UseChecklistProps {
   categories: ChecklistCategory[];
 }
-
-/**
- * Type alias for item states map structure.
- * Maps: categoryId → checklistId → itemId → status
- */
-export type ItemStatesMap = {
-  [categoryId: string]: {
-    [checklistId: string]: {
-      [itemId: string]: ChecklistItemStatus;
-    };
-  };
-};
 
 /**
  * チェックリスト状態管理フック
