@@ -76,8 +76,7 @@ export function transition(
       throw new Error(error);
     }
 
-    // Graceful degradation in production
-    console.error(error);
+    // Graceful degradation in production - return current state unchanged
     return currentStatus; // No-op transition
   }
 
