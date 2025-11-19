@@ -19,8 +19,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       if (data) {
         setStoredValue(data as T);
       }
-    } catch (error) {
-      console.error("Error loading from localStorage:", error);
+    } catch {
+      // Error already logged by loadFromStorage utility
     } finally {
       setIsLoaded(true);
     }
@@ -33,8 +33,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       setStoredValue(valueToStore);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       saveToStorage(valueToStore as any);
-    } catch (error) {
-      console.error("Error saving to localStorage:", error);
+    } catch {
+      // Error already logged by saveToStorage utility
     }
   };
 
