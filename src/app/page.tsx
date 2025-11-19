@@ -8,6 +8,7 @@ import { ResetsMenu } from "@/components/ResetsMenu";
 import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
 import { MenuType } from "@/types/checklist";
+import { isItemComplete } from "@/utils/checklist";
 import { toggleStatus, overrideStatus } from "@/utils/transitions";
 
 type ViewMode = "default" | "menu" | "checklist";
@@ -78,11 +79,7 @@ export default function Home() {
 
       const isComplete = checklist.items.every((item) => {
         const status = checklistState[item.id];
-        return (
-          status === "checked" ||
-          status === "overridden" ||
-          status === "checked-overridden"
-        );
+        return isItemComplete(status);
       });
 
       if (!isComplete) {
@@ -135,11 +132,8 @@ export default function Home() {
 
   const handleNext = () => {
     // 現在のチェックリストが完了しているか確認
-    const allChecked = currentItems.every(
-      (item) =>
-        item.status === "checked" ||
-        item.status === "overridden" ||
-        item.status === "checked-overridden"
+    const allChecked = currentItems.every((item) =>
+      isItemComplete(item.status)
     );
     if (!allChecked) return;
 
