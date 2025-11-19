@@ -29,20 +29,28 @@ type TransitionMap = {
  */
 const TRANSITIONS: TransitionMap = {
   unchecked: {
-    toggle: "checked",
-    override: "overridden",
+    toggle: "checked", // Normal check: item completed
+    override: "overridden", // Emergency bypass: skip without checking
   },
   checked: {
-    toggle: "unchecked",
-    override: "checked-overridden",
+    toggle: "unchecked", // Uncheck: user made a mistake
+    override: "checked-overridden", // Add override flag to already-checked item
   },
   overridden: {
-    toggle: "unchecked",
-    override: "unchecked",
+    // Both actions clear override state back to unchecked.
+    // Rationale: Override is emergency-only. To "undo" an override,
+    // pilot must explicitly re-check the item normally (via toggle).
+    // Pressing override again acts as "cancel override" → unchecked.
+    toggle: "unchecked", // Clear override → return to normal unchecked
+    override: "unchecked", // Cancel override → return to normal unchecked
   },
   "checked-overridden": {
-    toggle: "unchecked",
-    override: "unchecked",
+    // Both actions clear all state back to unchecked.
+    // Rationale: This dual-flag state is uncommon. Any action to modify
+    // it should reset completely, forcing pilot to re-evaluate the item
+    // from scratch rather than trying to toggle individual flags.
+    toggle: "unchecked", // Clear all state → return to normal unchecked
+    override: "unchecked", // Clear all state → return to normal unchecked
   },
 } as const;
 
