@@ -91,8 +91,8 @@ export interface Progress {
 }
 
 /**
- * Type alias for item states map structure.
- * Maps: categoryId → checklistId → itemId → status
+ * アイテム状態マップ構造の型エイリアス
+ * マッピング: カテゴリID → チェックリストID → アイテムID → ステータス
  */
 export type ItemStatesMap = {
   [categoryId: string]: {
