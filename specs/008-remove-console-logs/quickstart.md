@@ -171,7 +171,7 @@ const setValue = (value: T | ((val: T) => T)) => {
     const valueToStore = value instanceof Function ? value(storedValue) : value;
     setStoredValue(valueToStore);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    saveToStorage(valueToStorage as any);
+    saveToStorage(valueToStore as any);
   } catch (error) {
     // Error already logged by saveToStorage utility
   }
