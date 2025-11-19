@@ -172,7 +172,7 @@ export function resetChecklistInStorage(
   const newItemStates = {
     ...data.itemStates,
     [categoryId]: {
-      ...data.itemStates[categoryId],
+      ...(data.itemStates[categoryId] || {}),
       [checklistId]: {},
     },
   };
