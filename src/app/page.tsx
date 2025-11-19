@@ -7,7 +7,7 @@ import { ChecklistDisplay } from "@/components/ChecklistDisplay";
 import { ResetsMenu } from "@/components/ResetsMenu";
 import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
-import { MenuType, ChecklistItemStatus } from "@/types/checklist";
+import { MenuType } from "@/types/checklist";
 import { isItemComplete } from "@/utils/checklist";
 import { toggleStatus, overrideStatus } from "@/utils/transitions";
 
