@@ -9,14 +9,26 @@ Auto-generated from all feature plans. Last updated: 2025-11-19
 ## Project Structure
 
 ```text
-backend/
-frontend/
-tests/
+src/
+  app/
+  components/
+  data/
+  hooks/
+  types/
+  utils/
+public/
+next.config.js
+tailwind.config.js
+tsconfig.json
+package.json
 ```
 
 ## Commands
 
-npm test; npm run lint
+npm run dev       # Development server at localhost:3000/checklist
+npm run build     # Static export to out/ directory
+npm run lint      # ESLint check
+npm run format    # Prettier formatting
 
 ## Code Style
 

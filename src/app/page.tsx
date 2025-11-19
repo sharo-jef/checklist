@@ -7,8 +7,9 @@ import { ChecklistDisplay } from "@/components/ChecklistDisplay";
 import { ResetsMenu } from "@/components/ResetsMenu";
 import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
-import { MenuType, ChecklistItemStatus } from "@/types/checklist";
+import { MenuType } from "@/types/checklist";
 import { isItemComplete } from "@/utils/checklist";
+import { toggleStatus, overrideStatus } from "@/utils/transitions";
 
 type ViewMode = "default" | "menu" | "checklist";
 
@@ -167,49 +168,17 @@ export default function Home() {
   const isInChecklist =
     activeMenu === MenuType.NORMAL && viewMode === "checklist";
 
+  /**
+   * Handle toggle action on a checklist item (user clicked the item).
+   * Uses the state transition map to determine next status.
+   */
   const handleToggleItem = (itemId: string) => {
     const itemIndex = currentItems.findIndex((item) => item.id === itemId);
     const currentItem = currentItems[itemIndex];
 
-    // overriddenの項目の場合はoverriddenを外す
-    if (currentItem.status === "overridden") {
-      updateItemStatus(
-        activeCategory,
-        currentChecklist?.id || "",
-        itemId,
-        "unchecked"
-      );
-      // 最初の未チェック項目のインデックスを取得してアクティブにする
-      const firstUncheckedIndex = currentItems.findIndex(
-        (item, idx) =>
-          item.status === "unchecked" ||
-          (idx === itemIndex && item.status === "overridden")
-      );
-      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
-      return;
-    }
+    // Use transition map instead of nested conditionals
+    const newStatus = toggleStatus(currentItem.status);
 
-    // checked-overriddenの項目の場合はuncheckedに戻す
-    if (currentItem.status === "checked-overridden") {
-      updateItemStatus(
-        activeCategory,
-        currentChecklist?.id || "",
-        itemId,
-        "unchecked"
-      );
-      // 最初の未チェック項目のインデックスを取得してアクティブにする
-      const firstUncheckedIndex = currentItems.findIndex(
-        (item, idx) =>
-          item.status === "unchecked" ||
-          (idx === itemIndex && item.status === "checked-overridden")
-      );
-      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
-      return;
-    }
-
-    // unchecked <-> checked をトグル
-    const newStatus =
-      currentItem.status === "checked" ? "unchecked" : "checked";
     updateItemStatus(
       activeCategory,
       currentChecklist?.id || "",
@@ -229,28 +198,16 @@ export default function Home() {
     }, 0);
   };
 
+  /**
+   * Handle override action on a checklist item (user clicked ITEM OVRD button).
+   * Uses the state transition map to determine next status.
+   */
   const handleItemOverride = (itemId: string) => {
     const itemIndex = currentItems.findIndex((item) => item.id === itemId);
     const currentItem = currentItems[itemIndex];
 
-    let newStatus: ChecklistItemStatus;
-
-    // checked-overridden -> unchecked
-    if (currentItem.status === "checked-overridden") {
-      newStatus = "unchecked";
-    }
-    // checked -> checked-overridden
-    else if (currentItem.status === "checked") {
-      newStatus = "checked-overridden";
-    }
-    // overridden -> unchecked
-    else if (currentItem.status === "overridden") {
-      newStatus = "unchecked";
-    }
-    // unchecked -> overridden
-    else {
-      newStatus = "overridden";
-    }
+    // Use transition map instead of nested conditionals
+    const newStatus = overrideStatus(currentItem.status);
 
     updateItemStatus(
       activeCategory,
