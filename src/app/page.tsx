@@ -45,8 +45,16 @@ export default function Home() {
   const navigation = useMemo(
     () => ({
       hasNext: hasNextChecklist(activeCategory, checklistData, MenuType.NORMAL),
-      nextNormalChecklist: getNextIncompleteChecklist(MenuType.NORMAL, checklistData, itemStates),
-      nextNonNormalChecklist: getNextIncompleteChecklist(MenuType.NON_NORMAL, checklistData, itemStates),
+      nextNormalChecklist: getNextIncompleteChecklist(
+        MenuType.NORMAL,
+        checklistData,
+        itemStates
+      ),
+      nextNonNormalChecklist: getNextIncompleteChecklist(
+        MenuType.NON_NORMAL,
+        checklistData,
+        itemStates
+      ),
     }),
     // checklistData is a static constant and doesn't need to be in dependencies
     [activeCategory, itemStates]
@@ -155,7 +163,7 @@ export default function Home() {
     );
 
     // アクティブインデックスを最初の未チェック項目に更新
-    setTimeout(() => {
+    queueMicrotask(() => {
       const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
         if (idx === itemIndex) {
           return newStatus === "unchecked";
@@ -163,7 +171,7 @@ export default function Home() {
         return item.status === "unchecked";
       });
       setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
-    }, 0);
+    });
   };
 
   /**
@@ -185,7 +193,7 @@ export default function Home() {
     );
 
     // アクティブインデックスを最初の未チェック項目に更新
-    setTimeout(() => {
+    queueMicrotask(() => {
       const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
         if (idx === itemIndex) {
           return newStatus === "unchecked";
@@ -193,7 +201,7 @@ export default function Home() {
         return item.status === "unchecked";
       });
       setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
-    }, 0);
+    });
   };
 
   const handleChecklistOverride = () => {

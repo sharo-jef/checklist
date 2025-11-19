@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { RESET_MENU_EXIT_DELAY_MS } from "@/constants/ui";
 
 interface ResetsMenuProps {
   onResetNormal: () => void;
@@ -39,7 +40,7 @@ export function ResetsMenu({
       setClickedButton(null);
       onExitMenu();
       timeoutRef.current = null;
-    }, 1000);
+    }, RESET_MENU_EXIT_DELAY_MS);
   };
 
   return (
