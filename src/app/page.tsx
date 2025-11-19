@@ -44,11 +44,10 @@ export default function Home() {
   const navigation = useMemo(
     () => ({
       hasNext: hasNextChecklist(activeCategory, checklistData, MenuType.NORMAL),
-      firstUnchecked: getFirstUncheckedIndex(activeCategory, checklistData, itemStates),
       nextNormalChecklist: getNextIncompleteChecklist(MenuType.NORMAL, checklistData, itemStates),
       nextNonNormalChecklist: getNextIncompleteChecklist(MenuType.NON_NORMAL, checklistData, itemStates),
     }),
-    [activeCategory, itemStates]
+    [activeCategory, itemStates, checklistData]
   );
 
   const handleMenuChange = (menu: MenuType) => {
