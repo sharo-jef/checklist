@@ -1,6 +1,7 @@
 import { ChecklistItem } from "./ChecklistItem";
 import { ChecklistStatusBanner } from "./ChecklistStatusBanner";
 import { Checklist, ChecklistItemStatus } from "@/types/checklist";
+import { isItemComplete, isItemOverridden } from "@/utils/checklist";
 
 interface ChecklistDisplayProps {
   checklist: Checklist | undefined;
@@ -34,19 +35,9 @@ export function ChecklistDisplay({
   hasNextChecklist = false,
 }: ChecklistDisplayProps) {
   const allItemsChecked =
-    items.length > 0 &&
-    items.every(
-      (item) =>
-        item.status === "checked" ||
-        item.status === "overridden" ||
-        item.status === "checked-overridden"
-    );
+    items.length > 0 && items.every((item) => isItemComplete(item.status));
   const allItemsOverridden =
-    items.length > 0 &&
-    items.every(
-      (item) =>
-        item.status === "overridden" || item.status === "checked-overridden"
-    );
+    items.length > 0 && items.every((item) => isItemOverridden(item.status));
   const canGoNext = allItemsChecked && hasNextChecklist;
 
   const handleItemOverride = () => {
