@@ -44,8 +44,11 @@ export default function Home() {
   const navigation = useMemo(
     () => ({
       hasNext: hasNextChecklist(activeCategory, checklistData, MenuType.NORMAL),
+      firstUnchecked: getFirstUncheckedIndex(activeCategory, checklistData, itemStates),
+      nextNormalChecklist: getNextIncompleteChecklist(MenuType.NORMAL, checklistData, itemStates),
+      nextNonNormalChecklist: getNextIncompleteChecklist(MenuType.NON_NORMAL, checklistData, itemStates),
     }),
-    [activeCategory]
+    [activeCategory, itemStates]
   );
 
   const handleMenuChange = (menu: MenuType) => {
@@ -59,11 +62,7 @@ export default function Home() {
   };
 
   const handleNormalButton = () => {
-    const categoryId = getNextIncompleteChecklist(
-      MenuType.NORMAL,
-      checklistData,
-      itemStates
-    );
+    const categoryId = navigation.nextNormalChecklist;
     if (!categoryId) return;
     setActiveMenu(MenuType.NORMAL);
     setActiveCategory(categoryId);
@@ -74,11 +73,7 @@ export default function Home() {
   };
 
   const handleNonNormalButton = () => {
-    const categoryId = getNextIncompleteChecklist(
-      MenuType.NON_NORMAL,
-      checklistData,
-      itemStates
-    );
+    const categoryId = navigation.nextNonNormalChecklist;
     if (!categoryId) return;
     setActiveMenu(MenuType.NON_NORMAL);
     setActiveCategory(categoryId);
