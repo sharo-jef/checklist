@@ -4,6 +4,7 @@ import {
   MenuType,
 } from "@/types/checklist";
 import { CheckIcon } from "./CheckIcon";
+import { isItemComplete, isItemOverridden } from "@/utils/checklist";
 
 interface ChecklistMenuProps {
   categories: ChecklistCategory[];
@@ -33,11 +34,7 @@ export function ChecklistMenu({
 
     return checklist.items.every((item) => {
       const status = checklistState[item.id];
-      return (
-        status === "checked" ||
-        status === "overridden" ||
-        status === "checked-overridden"
-      );
+      return isItemComplete(status);
     });
   };
 
@@ -48,10 +45,8 @@ export function ChecklistMenu({
     const checklistState = itemStates[category.id]?.[checklist.id];
     if (!checklistState) return false;
 
-    return checklist.items.every(
-      (item) =>
-        checklistState[item.id] === "overridden" ||
-        checklistState[item.id] === "checked-overridden"
+    return checklist.items.every((item) =>
+      isItemOverridden(checklistState[item.id])
     );
   };
 
