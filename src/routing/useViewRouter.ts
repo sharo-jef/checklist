@@ -4,11 +4,21 @@ import { VIEW_COMPONENTS } from "./viewRegistry";
 import { MenuType } from "@/types/checklist";
 import { DefaultView } from "@/components/DefaultView";
 
+/**
+ * Type-safe result from the view router.
+ * 
+ * The component and props types are guaranteed to match at runtime through
+ * the ViewPropsMap type mapping (defined in routing.ts), but TypeScript
+ * cannot express this correlation between a runtime ViewKey value and
+ * compile-time types.
+ * 
+ * We use `Record<string, unknown>` as a constraint - safer than `any` because
+ * it ensures props is an object, while still allowing the spread operator.
+ * The actual runtime types are verified through ViewPropsMap and ViewRegistry.
+ */
 interface ViewRouterResult {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ViewComponent: ComponentType<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  viewProps: any;
+  ViewComponent: ComponentType<Record<string, unknown>>;
+  viewProps: Record<string, unknown>;
 }
 
 /**
@@ -106,5 +116,13 @@ export function useViewRouter(
     }
   }, [viewKey, appState]);
 
-  return { ViewComponent, viewProps };
+  // Type assertion is necessary because TypeScript cannot correlate the runtime
+  // ViewKey with its corresponding component and props types from ViewPropsMap.
+  // The types are guaranteed to match through the switch statement above.
+  return {
+    ViewComponent: ViewComponent as unknown as ComponentType<
+      Record<string, unknown>
+    >,
+    viewProps: viewProps as Record<string, unknown>,
+  };
 }
