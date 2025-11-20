@@ -240,20 +240,17 @@ export default function Home() {
   const viewState: ViewState = useMemo(() => {
     if (viewMode === "default") {
       return { view: "default" };
-    } else if (viewMode === "menu") {
+    } else if (viewMode === "menu" && activeMenu !== null) {
       // activeMenu is already MenuType, use it directly
-      return { view: "menu", menu: activeMenu! };
-    } else {
-      // viewMode === "checklist"
-      // Only NORMAL and NON_NORMAL can be in checklist view
-      return {
-        view: "checklist",
-        menu:
-          activeMenu === MenuType.NORMAL
-            ? MenuType.NORMAL
-            : MenuType.NON_NORMAL,
-      };
+      return { view: "menu", menu: activeMenu };
+    } else if (
+      viewMode === "checklist" &&
+      (activeMenu === MenuType.NORMAL || activeMenu === MenuType.NON_NORMAL)
+    ) {
+      return { view: "checklist", menu: activeMenu };
     }
+    // Fallback for invalid state
+    return { view: "default" };
   }, [viewMode, activeMenu]);
 
   // Construct AppState with all handlers and data
