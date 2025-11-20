@@ -14,7 +14,8 @@ import { DefaultView } from "@/components/DefaultView";
  * 
  * We use `Record<string, unknown>` as a constraint - safer than `any` because
  * it ensures props is an object, while still allowing the spread operator.
- * The actual runtime types are verified through ViewPropsMap and ViewRegistry.
+ * The actual runtime types are guaranteed through the exhaustive switch statement and ViewRegistry lookup.
+ * ViewPropsMap documents the expected type correlations for maintainers.
  */
 interface ViewRouterResult {
   ViewComponent: ComponentType<Record<string, unknown>>;

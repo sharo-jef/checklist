@@ -121,7 +121,8 @@ export interface ResetsMenuProps {
 
 /**
  * Maps each ViewKey to its corresponding component props type.
- * Provides compile-time type safety for view routing.
+ * Documents the ViewKey → props type mapping for maintainers.
+ * Not used directly for compile-time type safety.
  */
 export type ViewPropsMap = {
   default: DefaultViewProps;
