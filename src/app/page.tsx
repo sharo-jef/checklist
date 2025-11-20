@@ -278,6 +278,7 @@ export default function Home() {
       activeItemIndex,
       navigation,
     }),
+    // checklistData is a static constant and doesn't need to be in dependencies
     [
       handleNormalButton,
       handleNonNormalButton,
