@@ -65,8 +65,8 @@ export default function Home() {
         itemStates
       ),
     }),
-    // checklistData is a static constant and doesn't need to be in dependencies
-    [activeCategory, itemStates]
+    // checklistData is a static constant, but included for future-proofing
+    [checklistData, activeCategory, itemStates]
   );
 
   const handleMenuChange = useCallback((menu: MenuType) => {
