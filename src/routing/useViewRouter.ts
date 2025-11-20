@@ -8,14 +8,12 @@ import { DefaultView } from "@/components/DefaultView";
  * Type-safe result from the view router.
  * 
  * The component and props types are guaranteed to match at runtime through
- * the ViewPropsMap type mapping (defined in routing.ts), but TypeScript
- * cannot express this correlation between a runtime ViewKey value and
- * compile-time types.
+ * the exhaustive switch statement (lines 51-117) and ViewRegistry lookup.
+ * TypeScript cannot express the correlation between a runtime ViewKey value
+ * and compile-time types, so we use Record<string, unknown> as a safe constraint.
  * 
- * We use `Record<string, unknown>` as a constraint - safer than `any` because
- * it ensures props is an object, while still allowing the spread operator.
- * The actual runtime types are guaranteed through the exhaustive switch statement and ViewRegistry lookup.
- * ViewPropsMap documents the expected type correlations for maintainers.
+ * ViewPropsMap documents the expected type correlations for maintainers but
+ * is not used for runtime type verification.
  */
 interface ViewRouterResult {
   ViewComponent: ComponentType<Record<string, unknown>>;
@@ -117,13 +115,5 @@ export function useViewRouter(
     }
   }, [viewKey, appState]);
 
-  // Type assertion is necessary because TypeScript cannot correlate the runtime
-  // ViewKey with its corresponding component and props types from ViewPropsMap.
-  // The types are guaranteed to match through the switch statement above.
-  return {
-    ViewComponent: ViewComponent as unknown as ComponentType<
-      Record<string, unknown>
-    >,
-    viewProps: viewProps as Record<string, unknown>,
-  };
+  return { ViewComponent, viewProps };
 }
