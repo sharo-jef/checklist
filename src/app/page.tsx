@@ -65,7 +65,7 @@ export default function Home() {
         itemStates
       ),
     }),
-    // Dependencies: activeCategory, itemStates, and checklistData (static but included for future-proofing)
+    // checklistData is a static constant, but included for future-proofing
     [checklistData, activeCategory, itemStates]
   );
 

@@ -8,7 +8,7 @@ import { DefaultView } from "@/components/DefaultView";
  * Type-safe result from the view router.
  * 
  * The component and props types are guaranteed to match at runtime through
- * the exhaustive switch statement (lines 51-117) and ViewRegistry lookup.
+ * the exhaustive switch statement (lines 49-115) and ViewRegistry lookup.
  * TypeScript cannot express the correlation between a runtime ViewKey value
  * and compile-time types, so we use Record<string, unknown> as a safe constraint.
  * 
