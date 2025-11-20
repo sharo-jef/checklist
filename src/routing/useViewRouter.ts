@@ -7,10 +7,16 @@ import { DefaultView } from "@/components/DefaultView";
 /**
  * Type-safe result from the view router.
  * 
- * The component and props types are guaranteed to match at runtime through
- * the exhaustive switch statement (lines 49-115) and ViewRegistry lookup.
- * TypeScript cannot express the correlation between a runtime ViewKey value
- * and compile-time types, so we use Record<string, unknown> as a safe constraint.
+ * The exhaustive switch statement (lines 49-115) and ViewRegistry lookup help
+ * maintain the correlation between view keys, components, and props, but do not
+ * guarantee that component and props types match at runtime. There is no automated
+ * runtime type validation; it is the developer's responsibility to ensure that the
+ * props returned for each case match the expected types for the corresponding component.
+ * 
+ * Note: TypeScript *can* express the correlation between a runtime ViewKey value
+ * and compile-time types using mapped types and generics (see ViewRegistry and ViewPropsMap).
+ * This implementation chooses to use Record<string, unknown> for simplicity,
+ * but stronger compile-time type safety is possible if desired.
  * 
  * ViewPropsMap documents the expected type correlations for maintainers but
  * is not used for runtime type verification.
