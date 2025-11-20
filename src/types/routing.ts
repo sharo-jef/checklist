@@ -144,12 +144,10 @@ export function getViewKey(state: ViewState): ViewKey {
       return "default";
 
     case "menu":
-      // Convert MenuType enum to kebab-case string
-      // MenuType.NORMAL → "normal", MenuType.NON_NORMAL → "non-normal"
-      return `menu-${state.menu.toLowerCase().replace("_", "-")}` as ViewKey;
+      return `menu-${state.menu}` as ViewKey;
 
     case "checklist":
-      return `checklist-${state.menu.toLowerCase().replace("_", "-")}` as ViewKey;
+      return `checklist-${state.menu}` as ViewKey;
 
     default:
       // Exhaustiveness check - TypeScript error if case missing

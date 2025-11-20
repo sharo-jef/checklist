@@ -1,9 +1,6 @@
 "use client";
 
-interface DefaultViewProps {
-  onNormalClick: () => void;
-  onNonNormalClick: () => void;
-}
+import { DefaultViewProps } from "@/types/routing";
 
 export function DefaultView({
   onNormalClick,
