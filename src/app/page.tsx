@@ -88,7 +88,7 @@ export default function Home() {
     setActiveItemIndex(
       getFirstUncheckedIndex(categoryId, checklistData, itemStates)
     );
-  }, [navigation.nextNormalChecklist, setActiveCategory, itemStates]);
+  }, [navigation.nextNormalChecklist, setActiveCategory, itemStates, checklistData]);
 
   const handleNonNormalButton = useCallback(() => {
     const categoryId = navigation.nextNonNormalChecklist;
@@ -99,7 +99,7 @@ export default function Home() {
     setActiveItemIndex(
       getFirstUncheckedIndex(categoryId, checklistData, itemStates)
     );
-  }, [navigation.nextNonNormalChecklist, setActiveCategory, itemStates]);
+  }, [navigation.nextNonNormalChecklist, setActiveCategory, itemStates, checklistData]);
 
   const handleResetNormal = useCallback(() => {
     resetNormal();
@@ -124,7 +124,7 @@ export default function Home() {
         getFirstUncheckedIndex(categoryId, checklistData, itemStates)
       );
     },
-    [setActiveCategory, itemStates]
+    [setActiveCategory, itemStates, checklistData]
   );
 
   const handleNext = useCallback(() => {
@@ -150,7 +150,7 @@ export default function Home() {
         getFirstUncheckedIndex(nextCategory.id, checklistData, itemStates)
       );
     }
-  }, [currentItems, activeCategory, setActiveCategory, itemStates]);
+  }, [currentItems, activeCategory, setActiveCategory, itemStates, checklistData]);
 
   // チェックリスト表示中かどうか
   const isInChecklist =
