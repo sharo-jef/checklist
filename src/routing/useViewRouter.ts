@@ -50,10 +50,10 @@ export function useViewRouter(
   const viewKey = useMemo(() => getViewKey(viewState), [viewState]);
 
   // Look up component (with defensive fallback)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ViewComponent = useMemo(
     () => VIEW_COMPONENTS[viewKey] || DefaultView,
     [viewKey]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ) as ComponentType<any>;
 
   // Map AppState to component-specific props
