@@ -15,15 +15,17 @@ import { DefaultView } from "@/components/DefaultView";
  * 
  * Note: TypeScript *can* express the correlation between a runtime ViewKey value
  * and compile-time types using mapped types and generics (see ViewRegistry and ViewPropsMap).
- * This implementation chooses to use Record<string, unknown> for simplicity,
+ * This implementation chooses to use any for simplicity to avoid complex type assertions,
  * but stronger compile-time type safety is possible if desired.
  * 
  * ViewPropsMap documents the expected type correlations for maintainers but
  * is not used for runtime type verification.
  */
 interface ViewRouterResult {
-  ViewComponent: ComponentType<Record<string, unknown>>;
-  viewProps: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ViewComponent: ComponentType<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  viewProps: any;
 }
 
 /**
@@ -48,7 +50,11 @@ export function useViewRouter(
   const viewKey = useMemo(() => getViewKey(viewState), [viewState]);
 
   // Look up component (with defensive fallback)
-  const ViewComponent = VIEW_COMPONENTS[viewKey] || DefaultView;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ViewComponent = useMemo(
+    () => VIEW_COMPONENTS[viewKey] || DefaultView,
+    [viewKey]
+  ) as ComponentType<any>;
 
   // Map AppState to component-specific props
   const viewProps = useMemo(() => {

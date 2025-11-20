@@ -158,10 +158,10 @@ export function getViewKey(state: ViewState): ViewKey {
       return "default";
 
     case "menu":
-      return `menu-${state.menu}` as ViewKey;
+      return `menu-${state.menu.toLowerCase().replace('_', '-')}` as ViewKey;
 
     case "checklist":
-      return `checklist-${state.menu}` as ViewKey;
+      return `checklist-${state.menu.toLowerCase().replace('_', '-')}` as ViewKey;
 
     default:
       // Exhaustiveness check - TypeScript error if case missing
