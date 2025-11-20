@@ -4,11 +4,26 @@ import { VIEW_COMPONENTS } from "./viewRegistry";
 import { MenuType } from "@/types/checklist";
 import { DefaultView } from "@/components/DefaultView";
 
+/**
+ * Type-safe result from the view router.
+ * 
+ * The exhaustive switch statement (lines 49-115) and ViewRegistry lookup help
+ * maintain the correlation between view keys, components, and props, but do not
+ * guarantee that component and props types match at runtime. There is no automated
+ * runtime type validation; it is the developer's responsibility to ensure that the
+ * props returned for each case match the expected types for the corresponding component.
+ * 
+ * Note: TypeScript *can* express the correlation between a runtime ViewKey value
+ * and compile-time types using mapped types and generics (see ViewRegistry and ViewPropsMap).
+ * This implementation chooses to use Record<string, unknown> for simplicity,
+ * but stronger compile-time type safety is possible if desired.
+ * 
+ * ViewPropsMap documents the expected type correlations for maintainers but
+ * is not used for runtime type verification.
+ */
 interface ViewRouterResult {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ViewComponent: ComponentType<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  viewProps: any;
+  ViewComponent: ComponentType<Record<string, unknown>>;
+  viewProps: Record<string, unknown>;
 }
 
 /**

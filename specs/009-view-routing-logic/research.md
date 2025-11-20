@@ -134,8 +134,8 @@ function getViewKey(activeMenu: ActiveMenu, viewMode: ViewMode): ViewStateKey {
   if (viewMode === "default") return "default";
   if (activeMenu === null) return "default";
 
-  const menuStr = activeMenu.toLowerCase().replace("_", "-");
-  return `${menuStr}-${viewMode}` as ViewStateKey;
+  // MenuType enum values are already in kebab-case format
+  return `${activeMenu}-${viewMode}` as ViewStateKey;
 }
 
 // Usage in page.tsx

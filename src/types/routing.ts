@@ -120,6 +120,20 @@ export interface ResetsMenuProps {
 }
 
 /**
+ * Maps each ViewKey to its corresponding component props type.
+ * This type and ViewRegistry provide compile-time type safety for the view registry.
+ * Type assertions are NOT needed in the routing logic; the mapping ensures correct types.
+ */
+export type ViewPropsMap = {
+  default: DefaultViewProps;
+  "menu-normal": ChecklistMenuProps;
+  "menu-non-normal": ChecklistMenuProps;
+  "menu-resets": ResetsMenuProps;
+  "checklist-normal": ChecklistDisplayProps;
+  "checklist-non-normal": ChecklistDisplayProps;
+};
+
+/**
  * View component registry interface.
  * Maps ViewKey strings to their corresponding React component types.
  */
