@@ -1,10 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { TopMenu } from "@/components/TopMenu";
-import { ChecklistMenu } from "@/components/ChecklistMenu";
-import { ChecklistDisplay } from "@/components/ChecklistDisplay";
-import { ResetsMenu } from "@/components/ResetsMenu";
 import { ExitMenuButton } from "@/components/ExitMenuButton";
 import { useChecklist } from "@/hooks/useChecklist";
 import { checklistData } from "@/data/checklists";
@@ -16,9 +13,21 @@ import {
   getNextIncompleteChecklist,
   hasNextChecklist,
 } from "@/utils/navigation";
+import { useViewRouter } from "@/routing/useViewRouter";
+import { ViewState, AppState } from "@/types/routing";
 
 type ViewMode = "default" | "menu" | "checklist";
 
+/**
+ * Main application page component.
+ *
+ * Uses declarative view routing pattern with discriminated unions:
+ * - ViewState represents current view (default/menu/checklist)
+ * - useViewRouter maps ViewState → appropriate component and props
+ * - Eliminates nested conditional rendering for maintainability
+ *
+ * @returns The rendered checklist application
+ */
 export default function Home() {
   const [activeMenu, setActiveMenu] = useState<MenuType | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("default");
@@ -56,21 +65,21 @@ export default function Home() {
         itemStates
       ),
     }),
-    // checklistData is a static constant and doesn't need to be in dependencies
-    [activeCategory, itemStates]
+    // checklistData is a static constant, but included for future-proofing
+    [checklistData, activeCategory, itemStates]
   );
 
-  const handleMenuChange = (menu: MenuType) => {
+  const handleMenuChange = useCallback((menu: MenuType) => {
     setActiveMenu(menu);
     setViewMode("menu");
-  };
+  }, []);
 
-  const handleExitMenu = () => {
+  const handleExitMenu = useCallback(() => {
     setActiveMenu(null);
     setViewMode("default");
-  };
+  }, []);
 
-  const handleNormalButton = () => {
+  const handleNormalButton = useCallback(() => {
     const categoryId = navigation.nextNormalChecklist;
     if (!categoryId) return;
     setActiveMenu(MenuType.NORMAL);
@@ -79,9 +88,9 @@ export default function Home() {
     setActiveItemIndex(
       getFirstUncheckedIndex(categoryId, checklistData, itemStates)
     );
-  };
+  }, [navigation.nextNormalChecklist, setActiveCategory, itemStates, checklistData]);
 
-  const handleNonNormalButton = () => {
+  const handleNonNormalButton = useCallback(() => {
     const categoryId = navigation.nextNonNormalChecklist;
     if (!categoryId) return;
     setActiveMenu(MenuType.NON_NORMAL);
@@ -90,32 +99,35 @@ export default function Home() {
     setActiveItemIndex(
       getFirstUncheckedIndex(categoryId, checklistData, itemStates)
     );
-  };
+  }, [navigation.nextNonNormalChecklist, setActiveCategory, itemStates, checklistData]);
 
-  const handleResetNormal = () => {
+  const handleResetNormal = useCallback(() => {
     resetNormal();
     setActiveItemIndex(0);
-  };
+  }, [resetNormal]);
 
-  const handleResetNonNormal = () => {
+  const handleResetNonNormal = useCallback(() => {
     resetNonNormal();
     setActiveItemIndex(0);
-  };
+  }, [resetNonNormal]);
 
-  const handleResetAll = () => {
+  const handleResetAll = useCallback(() => {
     resetAll();
     setActiveItemIndex(0);
-  };
+  }, [resetAll]);
 
-  const handleChecklistSelect = (categoryId: string) => {
-    setActiveCategory(categoryId);
-    setViewMode("checklist");
-    setActiveItemIndex(
-      getFirstUncheckedIndex(categoryId, checklistData, itemStates)
-    );
-  };
+  const handleChecklistSelect = useCallback(
+    (categoryId: string) => {
+      setActiveCategory(categoryId);
+      setViewMode("checklist");
+      setActiveItemIndex(
+        getFirstUncheckedIndex(categoryId, checklistData, itemStates)
+      );
+    },
+    [setActiveCategory, itemStates, checklistData]
+  );
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     // 現在のチェックリストが完了しているか確認
     const allChecked = currentItems.every((item) =>
       isItemComplete(item.status)
@@ -138,7 +150,7 @@ export default function Home() {
         getFirstUncheckedIndex(nextCategory.id, checklistData, itemStates)
       );
     }
-  };
+  }, [currentItems, activeCategory, setActiveCategory, itemStates, checklistData]);
 
   // チェックリスト表示中かどうか
   const isInChecklist =
@@ -148,75 +160,149 @@ export default function Home() {
    * Handle toggle action on a checklist item (user clicked the item).
    * Uses the state transition map to determine next status.
    */
-  const handleToggleItem = (itemId: string) => {
-    const itemIndex = currentItems.findIndex((item) => item.id === itemId);
-    const currentItem = currentItems[itemIndex];
+  const handleToggleItem = useCallback(
+    (itemId: string) => {
+      const itemIndex = currentItems.findIndex((item) => item.id === itemId);
+      const currentItem = currentItems[itemIndex];
 
-    // Use transition map instead of nested conditionals
-    const newStatus = toggleStatus(currentItem.status);
+      // Use transition map instead of nested conditionals
+      const newStatus = toggleStatus(currentItem.status);
 
-    updateItemStatus(
-      activeCategory,
-      currentChecklist?.id || "",
-      itemId,
-      newStatus
-    );
+      updateItemStatus(
+        activeCategory,
+        currentChecklist?.id || "",
+        itemId,
+        newStatus
+      );
 
-    // アクティブインデックスを最初の未チェック項目に更新
-    queueMicrotask(() => {
-      const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
-        if (idx === itemIndex) {
-          return newStatus === "unchecked";
-        }
-        return item.status === "unchecked";
+      // アクティブインデックスを最初の未チェック項目に更新
+      queueMicrotask(() => {
+        const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
+          if (idx === itemIndex) {
+            return newStatus === "unchecked";
+          }
+          return item.status === "unchecked";
+        });
+        setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
       });
-      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
-    });
-  };
+    },
+    [currentItems, activeCategory, currentChecklist, updateItemStatus]
+  );
 
   /**
    * Handle override action on a checklist item (user clicked ITEM OVRD button).
    * Uses the state transition map to determine next status.
    */
-  const handleItemOverride = (itemId: string) => {
-    const itemIndex = currentItems.findIndex((item) => item.id === itemId);
-    const currentItem = currentItems[itemIndex];
+  const handleItemOverride = useCallback(
+    (itemId: string) => {
+      const itemIndex = currentItems.findIndex((item) => item.id === itemId);
+      const currentItem = currentItems[itemIndex];
 
-    // Use transition map instead of nested conditionals
-    const newStatus = overrideStatus(currentItem.status);
+      // Use transition map instead of nested conditionals
+      const newStatus = overrideStatus(currentItem.status);
 
-    updateItemStatus(
-      activeCategory,
-      currentChecklist?.id || "",
-      itemId,
-      newStatus
-    );
+      updateItemStatus(
+        activeCategory,
+        currentChecklist?.id || "",
+        itemId,
+        newStatus
+      );
 
-    // アクティブインデックスを最初の未チェック項目に更新
-    queueMicrotask(() => {
-      const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
-        if (idx === itemIndex) {
-          return newStatus === "unchecked";
-        }
-        return item.status === "unchecked";
+      // アクティブインデックスを最初の未チェック項目に更新
+      queueMicrotask(() => {
+        const firstUncheckedIndex = currentItems.findIndex((item, idx) => {
+          if (idx === itemIndex) {
+            return newStatus === "unchecked";
+          }
+          return item.status === "unchecked";
+        });
+        setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
       });
-      setActiveItemIndex(firstUncheckedIndex >= 0 ? firstUncheckedIndex : -1);
-    });
-  };
+    },
+    [currentItems, activeCategory, currentChecklist, updateItemStatus]
+  );
 
-  const handleChecklistOverride = () => {
+  const handleChecklistOverride = useCallback(() => {
     if (!currentChecklist) return;
     overrideChecklist(activeCategory, currentChecklist.id);
     // すべてオーバーライドしたので、アクティブインデックスを-1にして枠を消す
     setActiveItemIndex(-1);
-  };
+  }, [currentChecklist, activeCategory, overrideChecklist]);
 
-  const handleChecklistReset = () => {
+  const handleChecklistReset = useCallback(() => {
     if (!currentChecklist) return;
     resetChecklist(activeCategory, currentChecklist.id);
     // リセット後、最初の項目にアクティブインデックスを設定
     setActiveItemIndex(0);
-  };
+  }, [currentChecklist, activeCategory, resetChecklist]);
+
+  // Construct ViewState from current UI state
+  const viewState: ViewState = useMemo(() => {
+    if (viewMode === "default") {
+      return { view: "default" };
+    } else if (viewMode === "menu" && activeMenu !== null) {
+      // activeMenu is already MenuType, use it directly
+      return { view: "menu", menu: activeMenu };
+    } else if (
+      viewMode === "checklist" &&
+      (activeMenu === MenuType.NORMAL || activeMenu === MenuType.NON_NORMAL)
+    ) {
+      return { view: "checklist", menu: activeMenu };
+    }
+    // Fallback for invalid state
+    return { view: "default" };
+  }, [viewMode, activeMenu]);
+
+  // Construct AppState with all handlers and data
+  const appState: AppState = useMemo(
+    () => ({
+      // Handlers
+      handleNormalButton,
+      handleNonNormalButton,
+      handleChecklistSelect,
+      handleExitMenu,
+      handleResetNormal,
+      handleResetNonNormal,
+      handleResetAll,
+      handleNext,
+      handleToggleItem,
+      handleItemOverride,
+      handleChecklistOverride,
+      handleChecklistReset,
+
+      // Data
+      checklistData,
+      itemStates,
+      currentChecklist: currentChecklist || undefined,
+      currentItems,
+      activeItemIndex,
+      navigation,
+    }),
+    // checklistData is a static constant, but included for future-proofing
+    [
+      checklistData,
+      handleNormalButton,
+      handleNonNormalButton,
+      handleChecklistSelect,
+      handleExitMenu,
+      handleResetNormal,
+      handleResetNonNormal,
+      handleResetAll,
+      handleNext,
+      handleToggleItem,
+      handleItemOverride,
+      handleChecklistOverride,
+      handleChecklistReset,
+      itemStates,
+      currentChecklist,
+      currentItems,
+      activeItemIndex,
+      navigation,
+    ]
+  );
+
+  // Get the view component and props from the router
+  const { ViewComponent, viewProps } = useViewRouter(viewState, appState);
 
   return (
     <div className="h-screen w-full bg-[#09090C] flex flex-col overflow-hidden">
@@ -224,94 +310,11 @@ export default function Home() {
         activeMenu={isInChecklist ? null : activeMenu}
         onMenuChange={handleMenuChange}
       />
-      {viewMode === "default" && (
-        <div className="flex-1 bg-[#09090C] flex flex-col">
-          <div className="flex-1"></div>
-          <div className="flex justify-between gap-3 p-3">
-            <button
-              onClick={handleNormalButton}
-              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-white"
-            >
-              NORMAL
-            </button>
-            <button
-              onClick={handleNonNormalButton}
-              className="py-1 px-4 min-h-11 text-center font-mono text-xl tracking-wide leading-none border-2 border-transparent hover:border-white bg-[#4a5568] text-yellow-400 whitespace-pre-line"
-            >
-              {"NON-\nNORMAL"}
-            </button>
-          </div>
+      <ViewComponent {...viewProps} />
+      {viewMode === "menu" && (
+        <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
+          <ExitMenuButton onClick={handleExitMenu} />
         </div>
-      )}
-      {activeMenu === MenuType.NORMAL && viewMode === "menu" && (
-        <>
-          <ChecklistMenu
-            categories={checklistData.filter(
-              (cat) => cat.menuType === MenuType.NORMAL
-            )}
-            onSelect={handleChecklistSelect}
-            itemStates={itemStates}
-            menuType={MenuType.NORMAL}
-          />
-          <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
-            <ExitMenuButton onClick={handleExitMenu} />
-          </div>
-        </>
-      )}
-      {activeMenu === MenuType.NORMAL && viewMode === "checklist" && (
-        <ChecklistDisplay
-          checklist={currentChecklist}
-          items={currentItems}
-          activeItemIndex={activeItemIndex}
-          onToggleItem={handleToggleItem}
-          onItemOverride={handleItemOverride}
-          onChecklistOverride={handleChecklistOverride}
-          onChecklistReset={handleChecklistReset}
-          onNext={handleNext}
-          showControls={true}
-          hasNextChecklist={navigation.hasNext}
-        />
-      )}
-      {activeMenu === MenuType.RESETS && viewMode === "menu" && (
-        <>
-          <ResetsMenu
-            onResetNormal={handleResetNormal}
-            onResetNonNormal={handleResetNonNormal}
-            onResetAll={handleResetAll}
-            onExitMenu={handleExitMenu}
-          />
-          <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
-            <ExitMenuButton onClick={handleExitMenu} />
-          </div>
-        </>
-      )}
-      {activeMenu === MenuType.NON_NORMAL && viewMode === "menu" && (
-        <>
-          <ChecklistMenu
-            categories={checklistData.filter(
-              (cat) => cat.menuType === MenuType.NON_NORMAL
-            )}
-            onSelect={handleChecklistSelect}
-            itemStates={itemStates}
-            menuType={MenuType.NON_NORMAL}
-          />
-          <div className="flex justify-end gap-3 p-3 bg-[#09090C]">
-            <ExitMenuButton onClick={handleExitMenu} />
-          </div>
-        </>
-      )}
-      {activeMenu === MenuType.NON_NORMAL && viewMode === "checklist" && (
-        <ChecklistDisplay
-          checklist={currentChecklist}
-          items={currentItems}
-          activeItemIndex={activeItemIndex}
-          onToggleItem={handleToggleItem}
-          onItemOverride={handleItemOverride}
-          onChecklistOverride={handleChecklistOverride}
-          onChecklistReset={handleChecklistReset}
-          showControls={true}
-          hasNextChecklist={false}
-        />
       )}
     </div>
   );

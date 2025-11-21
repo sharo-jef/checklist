@@ -6,11 +6,7 @@
  * side effects, making them easily testable and reusable across components.
  */
 
-import {
-  ChecklistCategory,
-  MenuType,
-  ItemStatesMap,
-} from "@/types/checklist";
+import { ChecklistCategory, MenuType, ItemStatesMap } from "@/types/checklist";
 import { isItemComplete } from "@/utils/checklist";
 
 /**

@@ -16,7 +16,7 @@ interface ChecklistMenuProps {
       };
     };
   };
-  menuType?: MenuType;
+  menuType: MenuType;
 }
 
 export function ChecklistMenu({
@@ -52,18 +52,16 @@ export function ChecklistMenu({
 
   return (
     <div className="flex-1 bg-[#09090C] flex flex-col overflow-hidden">
-      {menuType && (
-        <div className="p-3 pt-0">
-          {/* 本来は NON-NORMAL MENU のサブメニューを開いた際に NON-NORMAL の文字の部分が戻るボタンになり、緑色になる */}
-          <div
-            className={`py-2 ${/*menuType === MenuType.NON_NORMAL*/ false ? "bg-(--menu-green)" : ""}`}
-          >
-            <h1 className="font-mono text-[20px] text-white tracking-wide text-center">
-              {menuType === MenuType.NORMAL ? "NORMAL MENU" : "NON-NORMAL MENU"}
-            </h1>
-          </div>
+      <div className="p-3 pt-0">
+        {/* 本来は NON-NORMAL MENU のサブメニューを開いた際に NON-NORMAL の文字の部分が戻るボタンになり、緑色になる */}
+        <div
+          className={`py-2 ${/*menuType === MenuType.NON_NORMAL*/ false ? "bg-(--menu-green)" : ""}`}
+        >
+          <h1 className="font-mono text-[20px] text-white tracking-wide text-center">
+            {menuType === MenuType.NORMAL ? "NORMAL MENU" : "NON-NORMAL MENU"}
+          </h1>
         </div>
-      )}
+      </div>
       <div className="flex-1 overflow-y-auto px-3 pb-3">
         <div className="space-y-2">
           {categories.map((category) => {

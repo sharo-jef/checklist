@@ -6,3 +6,9 @@ node_modules
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Exclude metadata and config directories
+.github/
+.specify/
+.vscode/
+specs/

@@ -180,6 +180,7 @@ Open http://localhost:3000/checklist
    - [ ] (Optional) Test with screen reader → announces "Exit Menu, button"
 
 5. **Build Verification**
+
    ```bash
    npm run lint
    npm run build
